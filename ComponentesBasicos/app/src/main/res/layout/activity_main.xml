@@ -28,6 +28,43 @@
             android:hint="hint" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cores"
+        android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/checkAzul"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Azul" />
+
+    <CheckBox
+        android:id="@+id/checkAmarelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Amarelo" />
+
+    <CheckBox
+        android:id="@+id/checkVermelho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vermelho" />
+
+    <CheckBox
+        android:id="@+id/checkVerde"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verde" />
+
+    <CheckBox
+        android:id="@+id/checkPreto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Preto" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
