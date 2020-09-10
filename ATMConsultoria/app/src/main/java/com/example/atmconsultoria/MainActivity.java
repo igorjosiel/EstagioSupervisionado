@@ -1,5 +1,7 @@
 package com.example.atmconsultoria;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                enviarEmail();
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -51,6 +52,30 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    public void enviarEmail()
+    {
+        //String celular = "tel:11996352894";
+        //String imagem = "https://www.viagenscinematograficas.com.br/2020/02/10-melhores-praias-do-brasil.html";
+        //String endereco = "https://www.google.pt/maps/place/Ventanilla,+Peru/@-11.8825598,-77.2110074,12z/data=!3m1!4b1!4m13!1m7!3m6!1s0x9105c5f619ee3ec7:0x14206cb9cc452e4a!2sLima,+Peru!3b1!8m2!3d-12.0463731!4d-77.042754!3m4!1s0x9105d39b15cfb90d:0xe832fbc8423fbf88!8m2!3d-11.8784382!4d-77.1264267?hl=pt-PT";
+
+        //Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(celular));
+        //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imagem));
+        //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(endereco));
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"viniciusnemtrindade@gmail.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "TCC");
+        intent.putExtra(Intent.EXTRA_TEXT, "Bora pegar no TCC?");
+
+        intent.setType("message/rfc822");
+        //intent.setType("text/plain");
+        //intent.setType("image/*");
+        //intent.setType("aplication/pdf");
+
+        startActivity(Intent.createChooser(intent, "Escolha um app de E-mail"));
     }
 
     @Override
