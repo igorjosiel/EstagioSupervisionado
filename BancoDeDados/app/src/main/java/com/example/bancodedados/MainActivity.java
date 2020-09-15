@@ -20,11 +20,16 @@ public class MainActivity extends AppCompatActivity {
             SQLiteDatabase bancoDados = openOrCreateDatabase("app", MODE_PRIVATE, null);
 
             //Criar tabela
-            bancoDados.execSQL("CREATE TABLE IF NOT EXISTS pessoas (nome VARCHAR, idade INT(3))");
+            bancoDados.execSQL("CREATE TABLE IF NOT EXISTS pessoas (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR, idade INT(3))");
+
+            //bancoDados.execSQL("DROP TABLE pessoas");
 
             //Inserir dados
-            //bancoDados.execSQL("INSERT INTO pessoas(nome, idade) VALUES ('Mariana', 18)");
-            //bancoDados.execSQL("INSERT INTO pessoas(nome, idade) VALUES ('Pedro', 50)");
+            //bancoDados.execSQL("INSERT INTO pessoas(nome, idade) VALUES ('Igor', 20)");
+            //bancoDados.execSQL("INSERT INTO pessoas(nome, idade) VALUES ('Lucas', 40)");
+
+            //bancoDados.execSQL("UPDATE pessoas SET nome = 'Mariana Silva' WHERE id = 1");
+            bancoDados.execSQL("UPDATE pessoas SET nome = 'Mariana Silva' WHERE id = 1");
 
             //Recuperar pessoas
             //String consulta = "SELECT nome, idade FROM pessoas WHERE nome = 'Igor' AND idade = 23";
@@ -39,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
             //String consulta = "SELECT nome, idade FROM pessoas WHERE 1=1 ORDER BY nome ASC";
             //String consulta = "SELECT nome, idade FROM pessoas WHERE 1=1 ORDER BY idade ASC";
             //String consulta = "SELECT nome, idade FROM pessoas WHERE 1=1 ORDER BY idade DESC";
-            String consulta = "SELECT nome, idade FROM pessoas WHERE 1=1 ORDER BY idade ASC LIMIT 3";
+            //String consulta = "SELECT nome, idade FROM pessoas WHERE 1=1 ORDER BY idade ASC LIMIT 3";
+            String consulta = "SELECT id, nome, idade FROM pessoas WHERE 1=1 ORDER BY idade ";
 
             Cursor cursor = bancoDados.rawQuery(consulta, null);
 
             //Índices da tabela
+            int indiceId = cursor.getColumnIndex("id");
             int indiceNome = cursor.getColumnIndex("nome");
             int indiceIdade = cursor.getColumnIndex("idade");
 
@@ -53,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
             {
                 String nome = cursor.getString(indiceNome);
                 String idade = cursor.getString(indiceIdade);
+                String id = cursor.getString(indiceId);
 
-                Log.i("Resultado - nome ", nome + " / idade: " + idade);
+                Log.i("Resultado - id " + id + " / nome ", nome + " / idade " + idade);
 
                 cursor.moveToNext();
             }
