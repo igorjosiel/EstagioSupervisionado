@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
             //bancoDados.execSQL("INSERT INTO pessoas(nome, idade) VALUES ('Lucas', 40)");
 
             //bancoDados.execSQL("UPDATE pessoas SET nome = 'Mariana Silva' WHERE id = 1");
-            bancoDados.execSQL("UPDATE pessoas SET nome = 'Mariana Silva' WHERE id = 1");
+            //bancoDados.execSQL("DELETE FROM pessoas WHERE id = 2");
+            bancoDados.execSQL("DELETE FROM pessoas");
 
             //Recuperar pessoas
             //String consulta = "SELECT nome, idade FROM pessoas WHERE nome = 'Igor' AND idade = 23";
