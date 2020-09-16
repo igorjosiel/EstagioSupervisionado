@@ -1,9 +1,11 @@
 package com.example.listatarefas.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.listatarefas.adapter.TarefaAdapter;
+import com.example.listatarefas.helper.DB_Helper;
 import com.example.listatarefas.helper.RecyclerItemClickListener;
 import com.example.listatarefas.model.Tarefa;
 import com.example.listatarefas.R;
@@ -39,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Configurar recycler
         recyclerView = findViewById(R.id.recyclerLista);
+
+        DB_Helper db = new DB_Helper(getApplicationContext());
+
+        ContentValues cv = new ContentValues();
+        cv.put("nome", "Teste");
+
+        db.getWritableDatabase().insert("tarefas", null, cv);
 
         //Adicionando evento de clique
         recyclerView.addOnItemTouchListener(
