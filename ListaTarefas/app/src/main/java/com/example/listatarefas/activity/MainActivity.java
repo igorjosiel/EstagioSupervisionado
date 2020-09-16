@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.example.listatarefas.adapter.TarefaAdapter;
 import com.example.listatarefas.helper.DB_Helper;
 import com.example.listatarefas.helper.RecyclerItemClickListener;
+import com.example.listatarefas.helper.TarefaDAO;
 import com.example.listatarefas.model.Tarefa;
 import com.example.listatarefas.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -88,13 +89,8 @@ public class MainActivity extends AppCompatActivity {
     public void carregarListaTarefas()
     {
         //Listar tarefas
-        Tarefa tarefa1 = new Tarefa();
-        tarefa1.setNomeTarefa("Ir ao mercado");
-        listaTarefas.add(tarefa1);
-
-        Tarefa tarefa2 = new Tarefa();
-        tarefa2.setNomeTarefa("Ir à feira");
-        listaTarefas.add(tarefa2);
+        TarefaDAO tarefaDAO = new TarefaDAO(getApplicationContext());
+        listaTarefas = tarefaDAO.listar();
 
         /*
         Exibe lista de tarefas no Recyclerview
