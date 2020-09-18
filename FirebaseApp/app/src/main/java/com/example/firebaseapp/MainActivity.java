@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,14 +29,46 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseReference usuarios = referencia.child("usuarios");
 
-        Usuario usuario = new Usuario();
+        //DatabaseReference usuarioPesquisa = usuarios.child("-L2LBNI8du5WSBtZqpKg");
+        //Query usuarioPesquisa = usuarios.orderByChild("nome").equalTo("Igor");
+        //Query usuarioPesquisa = usuarios.orderByKey().limitToFirst(2);
+        //Query usuarioPesquisa = usuarios.orderByKey().limitToLast(2);
+
+        /*Maior ou igual*/
+        //Query usuarioPesquisa = usuarios.orderByChild("idade").startAt(40);
+
+        /*Menor ou igual*/
+        //Query usuarioPesquisa = usuarios.orderByChild("idade").endAt(22);
+
+        /*Entre dois valores*/
+        //Query usuarioPesquisa = usuarios.orderByChild("idade").startAt(18).endAt(30);
+
+        /*Filtrar por palavras*/
+        Query usuarioPesquisa = usuarios.orderByChild("nome").startAt("J").endAt("J" + "\uf8ff");
+
+        usuarioPesquisa.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Usuario dadosUsuario = dataSnapshot.getValue(Usuario.class);
+
+                //Log.i("Dados usuário: ", "nome" + dadosUsuario.getNome() + " idade: " + dadosUsuario.getIdade());
+                Log.i("Dados usuário: ", dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        })
+
+        /*Usuario usuario = new Usuario();
         usuario.setNome("José Renato");
         usuario.setSobrenome("Silva");
         usuario.setIdade(31);
 
         usuarios.push().setValue(usuario);
 
-        /*Deslogar usuário
+        Deslogar usuário
         usuario.signOut();
 
         Logar  usuário
