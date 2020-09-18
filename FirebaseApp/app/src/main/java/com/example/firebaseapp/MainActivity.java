@@ -26,10 +26,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*Deslogar usuário*/
+        DatabaseReference usuarios = referencia.child("usuarios");
+
+        Usuario usuario = new Usuario();
+        usuario.setNome("José Renato");
+        usuario.setSobrenome("Silva");
+        usuario.setIdade(31);
+
+        usuarios.push().setValue(usuario);
+
+        /*Deslogar usuário
         usuario.signOut();
 
-        /*Logar  usuário
+        Logar  usuário
         usuario.signInWithEmailAndPassword("igorjosielvitalino@gmail.com", "igorjosiel").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
