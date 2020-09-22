@@ -19,15 +19,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DatabaseReference referencia = FirebaseDatabase.getInstance().getReference();
-    private FirebaseAuth usuario = FirebaseAuth.getInstance();
+    //private DatabaseReference referencia = FirebaseDatabase.getInstance().getReference();
+    //private FirebaseAuth usuario = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DatabaseReference usuarios = referencia.child("usuarios");
+        //DatabaseReference usuarios = referencia.child("usuarios");
 
         //DatabaseReference usuarioPesquisa = usuarios.child("-L2LBNI8du5WSBtZqpKg");
         //Query usuarioPesquisa = usuarios.orderByChild("nome").equalTo("Igor");
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         //Query usuarioPesquisa = usuarios.orderByChild("idade").startAt(18).endAt(30);
 
         /*Filtrar por palavras*/
-        Query usuarioPesquisa = usuarios.orderByChild("nome").startAt("J").endAt("J" + "\uf8ff");
+        /*Query usuarioPesquisa = usuarios.orderByChild("nome").startAt("J").endAt("J" + "\uf8ff");
 
         usuarioPesquisa.addValueEventListener(new ValueEventListener() {
             @Override
