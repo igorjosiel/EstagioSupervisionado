@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.example.organize.Model.Usuario;
 import com.example.organize.R;
 import com.example.organize.config.ConfiguracaoFirebase;
+import com.example.organize.helper.Base64Custom;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -88,6 +90,11 @@ public class CadastroActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
+                    String idUsuario = Base64Custom.codificarBase64(usuario.getEmail());
+
+                    usuario.setIdUsuario(idUsuario);
+                    usuario.salvar();
+
                     finish();
                 }
                 else
