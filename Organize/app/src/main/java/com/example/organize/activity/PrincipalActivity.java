@@ -3,7 +3,9 @@ package com.example.organize.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.organize.Model.Movimentacao;
 import com.example.organize.Model.Usuario;
+import com.example.organize.adapter.AdapterMovimentacao;
 import com.example.organize.config.ConfiguracaoFirebase;
 import com.example.organize.helper.Base64Custom;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -12,6 +14,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +35,8 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PrincipalActivity extends AppCompatActivity {
 
@@ -45,6 +51,13 @@ public class PrincipalActivity extends AppCompatActivity {
     private DatabaseReference usuarioRef;
     private ValueEventListener valueEventListenerUsuario;
 
+    private RecyclerView recyclerView;
+    private AdapterMovimentacao adapterMovimentacao;
+    private List<Movimentacao> movimentacoes = new ArrayList<>();
+    private DatabaseReference movimentacaoRef;
+    private String mesAnoSelecionado;
+    private ValueEventListener valueEventListenerMovimentacoes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +69,50 @@ public class PrincipalActivity extends AppCompatActivity {
         textoSaldo = findViewById(R.id.textSaldo);
         textoSaldacao = findViewById(R.id.textSaudacao);
         calendarView = findViewById(R.id.calendarView);
+        recyclerView = findViewById(R.id.recyclerMovimentos);
 
         configuraCalendarView();
+
+        //Configurar o adapter
+        adapterMovimentacao = new AdapterMovimentacao(movimentacoes, this);
+
+        //Configurar o RecyclerView
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+    }
+
+    public void recuperarMovimentacoes()
+    {
+        String emailUsuario = autenticacao.getCurrentUser().getEmail();
+        String idUsuario = Base64Custom.codificarBase64(emailUsuario);
+
+        movimentacaoRef = firebaseRef.child("movimentacao")
+                                     .child(idUsuario)
+                                     .child(mesAnoSelecionado);
+
+        valueEventListenerMovimentacoes = movimentacaoRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                movimentacoes.clear();
+
+                movimentacoes.clear();
+
+                for(DataSnapshot dados: dataSnapshot.getChildren())
+                {
+                    Movimentacao movimentacao = dados.getValue(Movimentacao.class);
+                    movimentacoes.add(movimentacao);
+                }
+
+                adapterMovimentacao.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     protected void onStart()
@@ -65,6 +120,7 @@ public class PrincipalActivity extends AppCompatActivity {
         super.onStart();
 
         recuperarResumo();
+        recuperarMovimentacoes();
     }
 
     public void recuperarResumo()
@@ -130,10 +186,21 @@ public class PrincipalActivity extends AppCompatActivity {
         CharSequence meses[] = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
         calendarView.setTitleMonths(meses);
 
+        CalendarDay dataAtual = calendarView.getCurrentDate();
+        String mesSelecionado = String.format("%02d", dataAtual.getMonth() + 1);
+
+        mesAnoSelecionado = String.valueOf(mesSelecionado) + "" + dataAtual.getMonth() + "" + dataAtual.getYear();
+
         calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
             public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                String mesSelecionado = String.format("%02d", date.getMonth() + 1);
 
+                mesAnoSelecionado = String.valueOf(date.getMonth() + 1) + "" + date.getMonth() + "" + date.getYear();
+
+                movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
+
+                recuperarMovimentacoes();
             }
         });
     }
@@ -142,5 +209,7 @@ public class PrincipalActivity extends AppCompatActivity {
     {
         super.onStop();
         usuarioRef.removeEventListener(valueEventListenerUsuario);
+
+        movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
     }
 }
