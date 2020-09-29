@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WatsAppClone</string>
+    <string name="digite_email">Digite o seu email</string>
+    <string name="digite_senha">Digite a sua senha</string>
+    <string name="botao_logar">Logar</string>
+    <string name="nao_tem_conta">Não tem conta? Cadastre-se</string>
+</resources>
