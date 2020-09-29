@@ -1,10 +1,12 @@
-package com.example.watsappclone;
+package com.example.watsappclone.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.watsappclone.R;
 
 public class LoguinActivity extends AppCompatActivity {
 
