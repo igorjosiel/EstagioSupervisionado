@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoguinActivity extends AppCompatActivity {
 
@@ -104,5 +105,14 @@ public class LoguinActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(LoguinActivity.this, MainActivity.class);
         startActivity(intent);
+    }
+
+    protected void onStart()
+    {
+        super.onStart();
+
+        FirebaseUser usuarioAtual = autenticacao.getCurrentUser();
+
+        if (usuarioAtual != null) abrirTelaPrincipal();
     }
 }
