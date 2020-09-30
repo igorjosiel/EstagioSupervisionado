@@ -3,6 +3,7 @@ package com.example.watsappclone.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,7 +12,13 @@ import android.view.MenuItem;
 
 import com.example.watsappclone.R;
 import com.example.watsappclone.config.ConfiguracaoFirebase;
+import com.example.watsappclone.fragment.ContatosFragment;
+import com.example.watsappclone.fragment.ConversasFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.v13.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +34,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("WatsApp");
         setSupportActionBar(toolbar);
+
+        //Configurar abas
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(),
+                FragmentPagerItems.with(this)
+                .add("Conversas", ConversasFragment.class)
+                .add("Contatos", ContatosFragment.class)
+                .create()
+        );
+
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        viewPager.setAdapter(adapter);
+
+        SmartTabLayout viewPagerTab = findViewById(R.id.viewPager);
+        viewPagerTab.setViewPager(viewPager);
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
