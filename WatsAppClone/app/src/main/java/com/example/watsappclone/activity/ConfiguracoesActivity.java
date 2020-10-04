@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -26,6 +27,7 @@ import com.example.watsappclone.helper.UsuarioFirebase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -41,6 +43,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private CircleImageView circleImageView;
     private StorageReference storageReference;
     private String identificadorUsuario;
+    private EditText editNome;
 
     private String[] permissoesNecessarias = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -62,12 +65,29 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         imageButtonCamera = findViewById(R.id.imageButtonCamera);
         imageButtonGaleria = findViewById(R.id.imageButtonGaleria);
         circleImageView = findViewById(R.id.circleImageViewFoto);
+        editNome = findViewById(R.id.editNome);
 
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("Configurações");
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //Recuperar dados do usuário
+        FirebaseUser usuario = UsuarioFirebase.getUsuarioAtual();
+        Uri url = usuario.getPhotoUrl();
+
+        if (url != null)
+        {
+            Glide.th(ConfiguracoesActivity.this)
+                    .load(url)
+                    .into(circleImageViewPerfil);
+        } else
+        {
+            CircleImageViewPerfil.setImageResource(R.drawable.padrao);
+        }
+
+        editNome.setText(usuario.getDisplayName());
 
         imageButtonCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +152,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Toast.makeText(ConfiguracoesActivity.this, "Sucesso ao fazer upload da imagem", Toast.LENGTH_SHORT).show();
+
+                            Uri url = taskSnapshot.getDownloadUrl();
+                            atualizarFotoUsuario(url);
                         }
                     });
                 }
@@ -140,6 +163,11 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void atualizarFotoUsuario(Uri url)
+    {
+        UsuarioFirebase.atualizarFotoUsuario(url);
     }
 
     @Override

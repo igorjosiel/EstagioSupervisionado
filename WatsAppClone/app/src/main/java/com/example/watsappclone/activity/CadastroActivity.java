@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.example.watsappclone.R;
 import com.example.watsappclone.config.ConfiguracaoFirebase;
 import com.example.watsappclone.helper.Base64Custom;
+import com.example.watsappclone.helper.UsuarioFirebase;
 import com.example.watsappclone.model.Usuario;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,6 +46,8 @@ public class CadastroActivity extends AppCompatActivity {
                 if (task.isSuccessful())
                 {
                     Toast.makeText(CadastroActivity.this, "Sucesso ao cadastrar usuário!", Toast.LENGTH_SHORT).show();
+
+                    UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
 
                     try {
                         String identificadorUsuario = Base64Custom.codificarBase64(usuario.getEmail());

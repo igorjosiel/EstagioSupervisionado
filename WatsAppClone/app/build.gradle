@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:11.8.0'
     implementation 'com.google.firebase:firebase-storage:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
+    implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
 
     //Dependências para abas
     implementation 'com.ogaclejapan.smarttablayout:library:1.7.0@aar'
