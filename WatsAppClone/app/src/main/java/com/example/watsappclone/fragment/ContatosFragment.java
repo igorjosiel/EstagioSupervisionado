@@ -1,5 +1,6 @@
 package com.example.watsappclone.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,10 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.example.watsappclone.R;
+import com.example.watsappclone.activity.ChatActivity;
 import com.example.watsappclone.adapter.ContatosAdapter;
 import com.example.watsappclone.config.ConfiguracaoFirebase;
+import com.example.watsappclone.helper.RecyclerItemClickListener;
 import com.example.watsappclone.helper.UsuarioFirebase;
 import com.example.watsappclone.model.Usuario;
 import com.google.firebase.auth.FirebaseUser;
@@ -95,6 +99,31 @@ public class ContatosFragment extends Fragment {
         recyclerViewListaContatos.setLayoutManager(layoutManager);
         recyclerViewListaContatos.setHasFixedSize(true);
         recyclerViewListaContatos.setAdapter(adapter);
+
+        //Configurar evento de clique no recyclerview
+        recyclerViewListaContatos.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        getActivity(),
+                        recyclerViewListaContatos,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Intent i = new Intent(getActivity(), ChatActivity.class);
+                                startActivity(i);
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        }
+                )
+        );
 
         return view;
     }
