@@ -8,6 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMensagens"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
@@ -33,6 +34,7 @@
             android:orientation="horizontal">
 
             <EditText
+                android:id="@+id/editMensagem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"></EditText>
@@ -41,11 +43,12 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/fabEnvio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:clickable="true"
+        android:onClick="enviarMensagem"
         app:srcCompat="@android:drawable/ic_menu_send" />
 
 </LinearLayout>
