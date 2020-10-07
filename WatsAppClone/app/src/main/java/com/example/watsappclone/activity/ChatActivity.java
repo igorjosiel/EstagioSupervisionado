@@ -24,6 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.watsappclone.R;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -37,6 +40,9 @@ public class ChatActivity extends AppCompatActivity {
     private CircleImageView circleImageViewFoto;
     private EditText editMensagem;
     private Usuario usuarioDestinatario;
+    private DatabaseReference database;
+    private DatabaseReference mensagensRef;
+    private ChildEventListener childEventListenerMensagens;
 
     //Identificador usuários: remetente e destinatário
     private String idUsuarioRemetente, idUsuarioDestinatario;
@@ -97,6 +103,12 @@ public class ChatActivity extends AppCompatActivity {
         recyclerMensagens.setLayoutManager(layoutManager);
         recyclerMensagens.setHasFixedSize(true);
         recyclerMensagens.setAdapter(adapter);
+
+        database = ConfiguraracaoFirebase.getFirebaseDatabase();
+
+        mensagensRef = database.child("mensagens")
+                .child(idUsuarioRemetente)
+                .child(idUsuarioDestinatario);
     }
 
     public void enviarMensagem(View view)
@@ -109,8 +121,11 @@ public class ChatActivity extends AppCompatActivity {
             mensagem.setIdUsuario(idUsuarioRemetente);
             mensagem.setMensagem(textoMensagem);
 
-            //Salvar mensagem
+            //Salvar mensagem para o remetente
             salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, mensagem);
+
+            //Salvar mensagem para o destinatário
+            salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem);
 
         } else
         {
@@ -130,5 +145,49 @@ public class ChatActivity extends AppCompatActivity {
 
         //Limpar texto
         editMensagem.setText("");
+    }
+
+    public void onStart()
+    {
+        super.onStart();
+        recuperarMensagens();
+    }
+
+    public void onStop()
+    {
+        super.onStop();
+        mensagensRef.removeEventListener(childEventListenerMensagens);
+    }
+
+    private void recuperarMensagens()
+    {
+        childEventListenerMensagens = mensagensRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Mensagem mensagem = dataSnapshot.getValue(Mensagem.class);
+                mensagens.add(mensagem);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
