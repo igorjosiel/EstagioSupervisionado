@@ -1,5 +1,6 @@
 package com.example.watsappclone.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,12 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.example.watsappclone.R;
+import com.example.watsappclone.activity.ChatActivity;
 import com.example.watsappclone.adapter.ConversasAdapter;
 import com.example.watsappclone.config.ConfiguracaoFirebase;
+import com.example.watsappclone.helper.RecyclerItemClickListener;
 import com.example.watsappclone.helper.UsuarioFirebase;
 import com.example.watsappclone.model.Conversa;
+import com.example.watsappclone.model.Usuario;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -68,6 +73,26 @@ public class ConversasFragment extends Fragment {
         return fragment;
     }
 
+    public void pesquisarConversas(String texto)
+    {
+        List<Conversa> listaConversasBusca = new ArrayList<>();
+
+        for (Conversa conversa : listaConversasBusca)
+        {
+            String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
+            String ultimaMsg = conversa.getUltimaMensagem().toLowerCase();
+
+            if (nome.contains(texto) || ultimaMsg.contains((texto)))
+            {
+                listaConversasBusca.add(conversa);
+            }
+        }
+
+        adapter = new ConversasAdapter(listaConversasBusca, getActivity());
+        recyclerViewConversas.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +120,36 @@ public class ConversasFragment extends Fragment {
         recyclerViewConversas.setHasFixedSize(true);
         recyclerViewConversas.setAdapter(adapter);
 
+        //Configurar evento de clique
+        recyclerViewConversas.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        getActivity(),
+                        recyclerViewConversas,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+
+                                Conversa conversaSelecionada = listaConversas.get(position);
+
+                                Intent i = new Intent(getActivity(), ChatActivity.class);
+                                i.putExtra("chatContato", conversaSelecionada.getUsuarioExibicao());
+                                startActivity(i);
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        }
+                )
+        );
+
+        //Configurar conversas
         String identificadorUsuario = UsuarioFirebase.getIdentificadorUsuario();
 
         database = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -117,6 +172,13 @@ public class ConversasFragment extends Fragment {
         super.onStop();
 
         conversasRef.removeEventListener(childEventListenerConversas);
+    }
+
+    public void recarregarConversas()
+    {
+        adapter = new ConversasAdapter(listaConversas, getActivity());
+        recyclerViewConversas.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     public void recuperarConversas()
