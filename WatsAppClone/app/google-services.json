@@ -1,45 +1,52 @@
 {
   "project_info": {
-    "project_number": "14052863703",
-    "firebase_url": "https://watsappclone-ba348.firebaseio.com",
-    "project_id": "watsappclone-ba348",
-    "storage_bucket": "watsappclone-ba348.appspot.com"
+    "project_number": "425823410135",
+    "firebase_url": "https://whatsapp-b6fba.firebaseio.com",
+    "project_id": "whatsapp-b6fba",
+    "storage_bucket": "whatsapp-b6fba.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:14052863703:android:f413cf324fac26e4170a92",
+        "mobilesdk_app_id": "1:425823410135:android:a3aed5bfd37a74ba",
         "android_client_info": {
-          "package_name": "com.example.watsappclone"
+          "package_name": "com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "14052863703-ijkn1bij9grj0fk4ppfnlasmk70ire97.apps.googleusercontent.com",
+          "client_id": "425823410135-p5j69q9306a6eh33hu3sqjddcudgh9kl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.watsappclone",
-            "certificate_hash": "ff07036e2a9c263ab4eaccba3e647553c4af99ba"
+            "package_name": "com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp",
+            "certificate_hash": "691d69cba8233c0c9efcceab7358ecb069d55ca1"
           }
         },
         {
-          "client_id": "14052863703-19c45qtjvtf589c14ameo5kdi15h092m.apps.googleusercontent.com",
+          "client_id": "425823410135-278luoa93iclamfbaec6pabj8rk5rscd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDK5OXppfGWlALMZCcVSPA8cI5F7YXRB3s"
+          "current_key": "AIzaSyCIq_M8QQmI6AJ0qdh5nGCT21KrjkNYxOw"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
+          "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "14052863703-19c45qtjvtf589c14ameo5kdi15h092m.apps.googleusercontent.com",
+              "client_id": "425823410135-278luoa93iclamfbaec6pabj8rk5rscd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }
