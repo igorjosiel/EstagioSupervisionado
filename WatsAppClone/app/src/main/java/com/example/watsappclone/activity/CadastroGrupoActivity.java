@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.google.firebase.storage.UploadTask;
 import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.R;
 import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.adapter.GrupoSelecionadoAdapter;
 import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.config.ConfiguracaoFirebase;
+import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.helper.UsuarioFirebase;
 import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.model.Grupo;
 import com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.model.Usuario;
 
@@ -43,6 +45,8 @@ public class CadastroGrupoActivity extends AppCompatActivity {
     private static final int SELECAO_GALERIA = 200;
     private StorageReference storageReference;
     private Grupo grupo;
+    private FloatingActionButton fabSalvarGrupo;
+    private EditText editNomeGrupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,8 @@ public class CadastroGrupoActivity extends AppCompatActivity {
         textTotalParticipantes = findViewById(R.id.textTotalParticipantes);
         recyclerMembrosSelecionados = findViewById(R.id.recyclerMembrosGrupo);
         imageGrupo = findViewById(R.id.imageGrupo);
+        fabSalvarGrupo = findViewById(R.id.fabSalvarGrupo);
+        editNomeGrupo = findViewById(R.id.editNomeGrupo);
         grupo = new Grupo();
 
         storageReference = ConfiguracaoFirebase.getFirebaseStorage();
@@ -73,16 +79,6 @@ public class CadastroGrupoActivity extends AppCompatActivity {
 
             }
         });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Recuperar lista de membros passada
         if( getIntent().getExtras() != null ){
@@ -105,6 +101,23 @@ public class CadastroGrupoActivity extends AppCompatActivity {
         recyclerMembrosSelecionados.setHasFixedSize(true);
         recyclerMembrosSelecionados.setAdapter( grupoSelecionadoAdapter );
 
+        //Configurar floating action button
+        fabSalvarGrupo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String nomeGrupo = editNomeGrupo.getText().toString();
+
+                //adiciona à lista de membros o usuário que está logado
+                listaMembrosSelecionados.add( UsuarioFirebase.getDadosUsuarioLogado() );
+                grupo.setMembros( listaMembrosSelecionados );
+
+                grupo.setNome( nomeGrupo );
+                grupo.salvar();
+
+
+            }
+        });
 
     }
 
