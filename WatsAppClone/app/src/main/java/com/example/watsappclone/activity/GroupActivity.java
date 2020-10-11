@@ -118,7 +118,7 @@ public class GroupActivity extends AppCompatActivity {
 
         recyclerViewMembrosSelecionados.addOnItemTouchListener(
                 new RecyclerItemClickListener(
-                        getApplicationContext(),
+                        ersas e getApplicationContext(),
                         recyclerViewMembrosSelecionados,
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
