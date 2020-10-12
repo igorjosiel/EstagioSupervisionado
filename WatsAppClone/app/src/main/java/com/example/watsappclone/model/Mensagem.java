@@ -1,14 +1,27 @@
-package com.example.watsappclone.model;
+package com.whatsapp.cursoandroid.jamiltondamasceno.whatsapp.model;
+
+/**
+ * Created by jamiltondamasceno
+ */
 
 public class Mensagem {
 
     private String idUsuario;
-
-    public Mensagem() {
-    }
-
+    private String nome;
     private String mensagem;
     private String imagem;
+
+    public Mensagem() {
+        this.setNome("");
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
     public String getIdUsuario() {
         return idUsuario;
