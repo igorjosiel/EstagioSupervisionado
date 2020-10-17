@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.Exclude;
+import com.instagram.model.Usuario;
 
 public class UsuarioFirebase {
 
@@ -19,11 +20,12 @@ public class UsuarioFirebase {
     }
 
     public static void atualizarNomeUsuario(String nome){
+
         try {
-            //Usuario que está logado no App
+            //Usuário logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
-            //Configurar objeto para poder alterar o perfil
+            //Configurar objeto para alteração do perfil do usuário
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setDisplayName( nome )
@@ -40,5 +42,23 @@ public class UsuarioFirebase {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static Usuario getDadosUsuarioLogado(){
+
+        FirebaseUser firebaseUser = getUsuarioAtual();
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail( firebaseUser.getEmail() );
+        usuario.setNome( firebaseUser.getDisplayName() );
+        usuario.setId( firebaseUser.getUid() );
+
+        if ( firebaseUser.getPhotoUrl() == null ){
+            usuario.setCaminhoFoto("");
+        }else{
+            usuario.setCaminhoFoto( firebaseUser.getPhotoUrl().toString() );
+        }
+
+        return usuario;
     }
 }
