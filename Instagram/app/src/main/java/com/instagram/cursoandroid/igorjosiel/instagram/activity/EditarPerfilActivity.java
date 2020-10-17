@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.instagram.R;
+import com.instagram.cursoandroid.jamiltondamasceno.instagram.R;
 import com.instagram.helper.ConfiguracaoFirebase;
 import com.instagram.helper.UsuarioFirebase;
 import com.instagram.model.Usuario;
@@ -50,6 +50,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         storageRef = ConfiguracaoFirebase.getFirebaseStorage();
         identificadorUsuario = UsuarioFirebase.getIdentificadorUsuario();
 
+        //Configuração da toolbar
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
         toolbar.setTitle("Editar perfil");
         setSupportActionBar( toolbar );
@@ -57,11 +58,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
+        //Inicializar componentes
         inicializarComponentes();
 
         //Recuperar dados do usuário no firebase
         FirebaseUser usuarioPerfil = UsuarioFirebase.getUsuarioAtual();
-        editNomePerfil.setText( usuarioPerfil.getDisplayName() );
+        editNomePerfil.setText( usuarioPerfil.getDisplayName().toUpperCase() );
         editEmailPerfil.setText( usuarioPerfil.getEmail() );
 
         Uri url = usuarioPerfil.getPhotoUrl();
@@ -73,7 +75,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
             imageEditarPerfil.setImageResource(R.drawable.avatar);
         }
 
-        //Atualizar o nome
+        //Salvar alterações do nome
         buttonSalvarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +95,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
             }
         });
 
-        //Atualizar foto do usuário
+        //Alterar foto do usuário
         textAlterarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +126,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
                 if ( imagem != null ){
 
-                    //Renderiza imagem na tela
+                    //Configura imagem na tela
                     imageEditarPerfil.setImageBitmap( imagem );
 
                     //Recuperar dados da imagem para o firebase
@@ -150,7 +152,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            //Recuperar local url da foto
+                            //Recuperar local da foto
                             Uri url = taskSnapshot.getDownloadUrl();
                             atualizarFotoUsuario( url );
 
@@ -160,7 +162,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         }
                     });
                 }
-
             }catch (Exception e){
                 e.printStackTrace();
             }
