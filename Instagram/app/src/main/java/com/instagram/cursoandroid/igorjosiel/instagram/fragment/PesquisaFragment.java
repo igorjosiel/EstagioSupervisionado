@@ -1,5 +1,6 @@
 package com.instagram.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,9 +18,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.instagram.R;
+import com.instagram.activity.PerfilAmigoActivity;
 import com.instagram.adapter.AdapterPesquisa;
 import com.instagram.helper.ConfiguracaoFirebase;
-import com.instagram.instagram.model.Usuario;
+import com.instagram.helper.RecyclerItemClickListener;
+import com.instagram.model.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +61,33 @@ public class PesquisaFragment extends Fragment {
         adapterPesquisa = new AdapterPesquisa(listaUsuarios, getActivity());
         recyclerPesquisa.setAdapter( adapterPesquisa );
 
-        //Configuração do searchview para pesquisa
+        //Configuração de evento de clique
+        recyclerPesquisa.addOnItemTouchListener(new RecyclerItemClickListener(
+                getActivity(),
+                recyclerPesquisa,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        Usuario usuarioSelecionado = listaUsuarios.get(position);
+                        Intent i = new Intent(getActivity(), PerfilAmigoActivity.class);
+                        i.putExtra("usuarioSelecionado", usuarioSelecionado );
+                        startActivity( i );
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    }
+                }
+        ));
+
+        //Configuração de searchview para pesquisa
         searchViewPesquisa.setQueryHint("Buscar usuários");
         searchViewPesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -81,7 +111,6 @@ public class PesquisaFragment extends Fragment {
 
         listaUsuarios.clear();
 
-        //Pesquisa usuários caso tenha texto na pesquisa
         if( texto.length() >= 2 ){
 
             Query query = usuariosRef.orderByChild("nome")
@@ -104,6 +133,7 @@ public class PesquisaFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+
                 }
             });
         }
