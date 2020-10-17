@@ -1,5 +1,6 @@
 package com.instagram.helper;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -19,13 +20,18 @@ public class UsuarioFirebase {
         return usuario.getCurrentUser();
     }
 
+    public static String getIdentificadorUsuario(){
+        return getUsuarioAtual().getUid();
+    }
+
     public static void atualizarNomeUsuario(String nome){
 
         try {
-            //Usuário logado no App
+
+            //Usuario logado no App
             FirebaseUser usuarioLogado = getUsuarioAtual();
 
-            //Configurar objeto para alteração do perfil do usuário
+            //Configurar objeto para alteração do perfil
             UserProfileChangeRequest profile = new UserProfileChangeRequest
                     .Builder()
                     .setDisplayName( nome )
@@ -35,6 +41,32 @@ public class UsuarioFirebase {
                 public void onComplete(@NonNull Task<Void> task) {
                     if( !task.isSuccessful() ){
                         Log.d("Perfil","Erro ao atualizar nome de perfil." );
+                    }
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarFotoUsuario(Uri url){
+
+        try {
+
+            //Usuário logado no App
+            FirebaseUser usuarioLogado = getUsuarioAtual();
+
+            //Configurar objeto para alteração do perfil
+            UserProfileChangeRequest profile = new UserProfileChangeRequest
+                    .Builder()
+                    .setPhotoUri( url )
+                    .build();
+            usuarioLogado.updateProfile( profile ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if( !task.isSuccessful() ){
+                        Log.d("Perfil","Erro ao atualizar a foto de perfil." );
                     }
                 }
             });
