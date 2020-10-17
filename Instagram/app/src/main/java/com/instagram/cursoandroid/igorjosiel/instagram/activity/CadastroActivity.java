@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.instagram.R;
 import com.instagram.helper.ConfiguracaoFirebase;
+import com.instagram.helper.UsuarioFirebase;
 import com.instagram.model.Usuario;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -75,7 +76,6 @@ public class CadastroActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     public void cadastrar(final Usuario usuario){
@@ -101,6 +101,9 @@ public class CadastroActivity extends AppCompatActivity {
                                 String idUsuario = task.getResult().getUser().getUid();
                                 usuario.setId( idUsuario );
                                 usuario.salvar();
+
+                                //Salvar dados no profile do Firebase
+                                UsuarioFirebase.atualizarNomeUsuario( usuario.getNome() );
 
                                 Toast.makeText(CadastroActivity.this,
                                         "Cadastro com sucesso",
@@ -134,7 +137,6 @@ public class CadastroActivity extends AppCompatActivity {
                             Toast.makeText(CadastroActivity.this,
                                     "Erro: " + erroExcecao ,
                                     Toast.LENGTH_SHORT).show();
-
                         }
 
                     }
