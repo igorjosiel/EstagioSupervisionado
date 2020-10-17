@@ -73,15 +73,12 @@ public class CadastroActivity extends AppCompatActivity {
                             "Preencha o nome!",
                             Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
 
-
     }
 
-    public void cadastrar( Usuario usuario){
+    public void cadastrar(final Usuario usuario){
 
         progressBar.setVisibility(View.VISIBLE);
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
@@ -96,13 +93,25 @@ public class CadastroActivity extends AppCompatActivity {
 
                         if( task.isSuccessful() ){
 
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(CadastroActivity.this,
-                                    "Cadastro com sucesso",
-                                    Toast.LENGTH_SHORT).show();
+                            try {
 
-                            startActivity( new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                                progressBar.setVisibility(View.GONE);
+
+                                //Salvar dados no firebase
+                                String idUsuario = task.getResult().getUser().getUid();
+                                usuario.setId( idUsuario );
+                                usuario.salvar();
+
+                                Toast.makeText(CadastroActivity.this,
+                                        "Cadastro com sucesso",
+                                        Toast.LENGTH_SHORT).show();
+
+                                startActivity( new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
 
                         }else {
 
@@ -126,13 +135,11 @@ public class CadastroActivity extends AppCompatActivity {
                                     "Erro: " + erroExcecao ,
                                     Toast.LENGTH_SHORT).show();
 
-
                         }
 
                     }
                 }
         );
-
     }
 
     public void inicializarComponentes(){
@@ -144,7 +151,5 @@ public class CadastroActivity extends AppCompatActivity {
         progressBar     = findViewById(R.id.progressCadastro);
 
         campoNome.requestFocus();
-
     }
-
 }
