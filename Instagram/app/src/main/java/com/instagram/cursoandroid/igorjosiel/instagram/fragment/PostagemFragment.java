@@ -2,6 +2,8 @@ package com.instagram.fragment;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -11,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.instagram.R;
+import com.instagram.activity.FiltroActivity;
 import com.instagram.helper.Permissao;
+
+import java.io.ByteArrayOutputStream;
 
 public class PostagemFragment extends Fragment {
 
@@ -33,14 +38,13 @@ public class PostagemFragment extends Fragment {
         
         View view = inflater.inflate(R.layout.fragment_postagem, container, false);
 
-        //Validação das permissões
+        //Validar permissões
         Permissao.validarPermissoes(permissoesNecessarias, getActivity(), 1 );
 
-        //Inicializar componentes
         buttonAbrirCamera = view.findViewById(R.id.buttonAbrirCamera);
         buttonAbrirGaleria = view.findViewById(R.id.buttonAbrirGaleria);
 
-        //Adiciona evento de clique no botão da camera
+        //Adicionar evento de clique no botão da câmera
         buttonAbrirCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +55,7 @@ public class PostagemFragment extends Fragment {
             }
         });
 
-        //Adiciona evento de clique no botão da galeria
+        //Adicionar evento de clique no botão da galeria
         buttonAbrirGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,5 +67,44 @@ public class PostagemFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if( resultCode == getActivity().RESULT_OK ){
+
+            Bitmap imagem = null;
+
+            try {
+                //Valida tipo de seleção da imagem
+                switch ( requestCode ){
+                    case SELECAO_CAMERA :
+                        imagem = (Bitmap) data.getExtras().get("data");
+                        break;
+                    case SELECAO_GALERIA :
+                        Uri localImagemSelecionada = data.getData();
+                        imagem = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), localImagemSelecionada);
+                        break;
+                }
+
+                //Valida imagem selecionada
+                if( imagem != null ){
+
+                    //Converte imagem em byte array
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    imagem.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                    byte[] dadosImagem = baos.toByteArray();
+
+                    //Envia imagem escolhida para aplicação de filtro
+                    Intent i = new Intent(getActivity(), FiltroActivity.class);
+                    i.putExtra("fotoEscolhida", dadosImagem );
+                    startActivity( i );
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }
