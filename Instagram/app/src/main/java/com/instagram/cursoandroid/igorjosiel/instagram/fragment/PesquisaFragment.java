@@ -22,8 +22,10 @@ import com.instagram.activity.PerfilAmigoActivity;
 import com.instagram.adapter.AdapterPesquisa;
 import com.instagram.helper.ConfiguracaoFirebase;
 import com.instagram.helper.RecyclerItemClickListener;
+import com.instagram.helper.UsuarioFirebase;
 import com.instagram.model.Usuario;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +37,15 @@ public class PesquisaFragment extends Fragment {
     private List<Usuario> listaUsuarios;
     private DatabaseReference usuariosRef;
     private AdapterPesquisa adapterPesquisa;
+    private String idUsuarioLogado;
 
     public PesquisaFragment() {
-        
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        
+    
         View view = inflater.inflate(R.layout.fragment_pesquisa, container, false);
 
         searchViewPesquisa = view.findViewById(R.id.searchViewPesquisa);
@@ -53,15 +55,16 @@ public class PesquisaFragment extends Fragment {
         listaUsuarios = new ArrayList<>();
         usuariosRef = ConfiguracaoFirebase.getFirebase()
                 .child("usuarios");
+        idUsuarioLogado = UsuarioFirebase.getIdentificadorUsuario();
 
-        //Configuração do RecyclerView para exibição de usuários
+        //Configuração do RecyclerView
         recyclerPesquisa.setHasFixedSize(true);
         recyclerPesquisa.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapterPesquisa = new AdapterPesquisa(listaUsuarios, getActivity());
         recyclerPesquisa.setAdapter( adapterPesquisa );
 
-        //Configuração de evento de clique
+        //Configurar evento de clique
         recyclerPesquisa.addOnItemTouchListener(new RecyclerItemClickListener(
                 getActivity(),
                 recyclerPesquisa,
@@ -77,17 +80,15 @@ public class PesquisaFragment extends Fragment {
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-
                     }
 
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                     }
                 }
         ));
 
-        //Configuração de searchview para pesquisa
+        //Configuração do searchview
         searchViewPesquisa.setQueryHint("Buscar usuários");
         searchViewPesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -125,7 +126,12 @@ public class PesquisaFragment extends Fragment {
 
                     for( DataSnapshot ds : dataSnapshot.getChildren() ){
 
-                        listaUsuarios.add( ds.getValue(Usuario.class) );
+                        //verifica se é usuário logado e remove da lista
+                        Usuario usuario = ds.getValue(Usuario.class);
+                        if ( idUsuarioLogado.equals( usuario.getId() ) )
+                            continue;
+
+                        listaUsuarios.add( usuario );
                     }
 
                     adapterPesquisa.notifyDataSetChanged();
@@ -133,7 +139,6 @@ public class PesquisaFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
         }
