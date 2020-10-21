@@ -1,11 +1,13 @@
 package com.instagram.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -51,6 +53,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerPerfilAmigo;
 
     private String idUsuarioLogado;
+    private List<Postagem> postagens;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +75,12 @@ public class PerfilAmigoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
-        //Recuperação de usuário selecionado
+        //Recuperar usuário selecionado
         Bundle bundle = getIntent().getExtras();
         if( bundle != null ){
             usuarioSelecionado = (Usuario) bundle.getSerializable("usuarioSelecionado");
 
-            //Configuração da referência das postagens de usuário
+            //Configuração da referência das postagens do usuário
             postagensUsuarioRef = ConfiguracaoFirebase.getFirebase()
                     .child("postagens")
                     .child( usuarioSelecionado.getId() );
@@ -97,6 +100,21 @@ public class PerfilAmigoActivity extends AppCompatActivity {
         inicializarImageLoader();
 
         carregarFotosPostagem();
+
+        //Abre a foto clicada
+        gridViewPerfil.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Postagem postagem = postagens.get( position );
+                Intent i = new Intent(getApplicationContext(), VisualizarPostagemActivity.class );
+
+                i.putExtra("postagem", postagem );
+                i.putExtra("usuario", usuarioSelecionado );
+
+                startActivity( i );
+            }
+        });
     }
 
     public void inicializarImageLoader() {
@@ -115,6 +133,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
     public void carregarFotosPostagem(){
 
         //Recupera as fotos postadas pelo usuário
+        postagens = new ArrayList<>();
         postagensUsuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,11 +146,9 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                 List<String> urlFotos = new ArrayList<>();
                 for( DataSnapshot ds: dataSnapshot.getChildren() ){
                     Postagem postagem = ds.getValue( Postagem.class );
+                    postagens.add( postagem );
                     urlFotos.add( postagem.getCaminhoFoto() );
                 }
-
-                int qtdPostagem = urlFotos.size();
-                textPublicacoes.setText( String.valueOf(qtdPostagem) );
 
                 //Configurar adapter
                 adapterGrid = new AdapterGrid(getApplicationContext(), R.layout.grid_postagem, urlFotos );
@@ -220,7 +237,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
                 .child( uAmigo.getId() );
         seguidorRef.setValue( dadosAmigo );
 
-        //Alterar botão acão para seguindo
+        //Alterar botão acao para seguindo
         buttonAcaoPerfil.setText("Seguindo");
         buttonAcaoPerfil.setOnClickListener(null);
 
@@ -248,7 +265,7 @@ public class PerfilAmigoActivity extends AppCompatActivity {
         //Recuperar dados do amigo selecionado
         recuperarDadosPerfilAmigo();
 
-        //Recuperar dados do usuário logado
+        //Recuperar dados usuário logado
         recuperarDadosUsuarioLogado();
     }
 
@@ -268,9 +285,12 @@ public class PerfilAmigoActivity extends AppCompatActivity {
 
                         Usuario usuario = dataSnapshot.getValue( Usuario.class );
 
+                        String postagens = String.valueOf( usuario.getPostagens() );
                         String seguindo = String.valueOf( usuario.getSeguindo() );
                         String seguidores = String.valueOf( usuario.getSeguidores() );
 
+                        //Configura valores recuperados
+                        textPublicacoes.setText( postagens );
                         textSeguidores.setText( seguidores );
                         textSeguindo.setText( seguindo );
                     }

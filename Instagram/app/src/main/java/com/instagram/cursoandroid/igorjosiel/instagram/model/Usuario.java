@@ -1,4 +1,4 @@
-package com.instagram.model;
+package com.model;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
@@ -26,6 +26,19 @@ public class Usuario implements Serializable {
         DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebase();
         DatabaseReference usuariosRef = firebaseRef.child("usuarios").child( getId() );
         usuariosRef.setValue( this );
+    }
+
+    public void atualizarQtdPostagem(){
+
+        DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebase();
+        DatabaseReference usuariosRef = firebaseRef
+                .child("usuarios")
+                .child( getId() );
+
+        HashMap<String, Object> dados = new HashMap<>();
+        dados.put("postagens", getPostagens() );
+
+        usuariosRef.updateChildren( dados );
     }
 
     public void atualizar(){
