@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context="com.instagram.activity.FiltroActivity">
+    tools:context="com.instagram.cursoandroid.jamiltondamasceno.instagram.activity.FiltroActivity">
 
     <LinearLayout
 
@@ -21,12 +21,6 @@
             android:layout_height="420dp"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/avatar" />
-
-        <ProgressBar
-            android:id="@+id/progressFiltro"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
