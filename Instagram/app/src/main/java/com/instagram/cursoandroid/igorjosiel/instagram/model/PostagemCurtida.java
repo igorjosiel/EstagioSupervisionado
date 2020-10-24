@@ -44,6 +44,19 @@ public class PostagemCurtida {
         pCurtidasRef.setValue( getQtdCurtidas() );
     }
 
+    public void remover(){
+
+        DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebase();
+
+        DatabaseReference pCurtidasRef = firebaseRef
+                .child("postagens-curtidas")
+                .child( feed.getId() )//id_postagem
+                .child( usuario.getId() );//id_usuario_logado
+        pCurtidasRef.removeValue();
+
+        atualizarQtd(-1);
+    }
+
     public Feed getFeed() {
         return feed;
     }

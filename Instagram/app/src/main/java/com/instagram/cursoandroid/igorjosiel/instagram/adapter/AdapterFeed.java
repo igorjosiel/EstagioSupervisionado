@@ -1,6 +1,7 @@
 package com.instagram.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.instagram.R;
+import com.instagram.activity.ComentariosActivity;
 import com.instagram.helper.ConfiguracaoFirebase;
 import com.instagram.helper.UsuarioFirebase;
 import com.instagram.model.Feed;
@@ -60,6 +62,16 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
         holder.descricao.setText( feed.getDescricao() );
         holder.nome.setText( feed.getNomeUsuario() );
 
+        //Adiciona evento de clique nos comentários
+        holder.visualizarComentario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, ComentariosActivity.class);
+                i.putExtra("idPostagem", feed.getId() );
+                context.startActivity( i );
+            }
+        });
+
         //Recuperar dados da postagem curtida
         DatabaseReference curtidasRef = ConfiguracaoFirebase.getFirebase()
                 .child("postagens-curtidas")
@@ -74,6 +86,13 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
                     qtdCurtidas = postagemCurtida.getQtdCurtidas();
                 }
 
+                //Verifica se já foi clicado
+                if( dataSnapshot.hasChild( usuarioLogado.getId() ) ){
+                    holder.likeButton.setLiked(true);
+                }else {
+                    holder.likeButton.setLiked(false);
+                }
+
                 //Monta objeto postagem curtida
                 final PostagemCurtida curtida = new PostagemCurtida();
                 curtida.setFeed( feed );
@@ -85,12 +104,17 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder> 
                     @Override
                     public void liked(LikeButton likeButton) {
                         curtida.salvar();
+                        holder.qtdCurtidas.setText( curtida.getQtdCurtidas() + " curtidas" );
                     }
 
                     @Override
                     public void unLiked(LikeButton likeButton) {
+                        curtida.remover();
+                        holder.qtdCurtidas.setText( curtida.getQtdCurtidas() + " curtidas" );
                     }
                 });
+
+                holder.qtdCurtidas.setText( curtida.getQtdCurtidas() + " curtidas" );
             }
 
             @Override
