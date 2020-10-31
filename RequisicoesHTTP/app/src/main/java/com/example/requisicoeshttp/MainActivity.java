@@ -3,9 +3,14 @@ package com.requisicoeshttp;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 String urlApi = "https://blockchain.info/ticker";
                 String cep = "01310100";
                 String urlCep = "https://viacep.com.br/ws/" + cep + "/json/";
-                task.execute(urlCep);
+                task.execute(urlApi);
             }
         });
     }
@@ -87,7 +92,24 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
-            textoResultado.setText( resultado );
+
+            String objetoValor = null;
+            String valorMoeda = null;
+            String simbolo = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(resultado);
+                objetoValor = jsonObject.getString("BRL");
+
+                JSONObject jsonObjectReal = new JSONObject(objetoValor);
+                valorMoeda = jsonObjectReal.getString("last");
+                simbolo = jsonObjectReal.getString("symbol");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            textoResultado.setText(simbolo+" "+valorMoeda);
         }
     }
 }
