@@ -8,17 +8,18 @@
     android:layout_margin="16dp"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.requisicoesHTTP.MainActivity">
+    tools:context="com.requisicoeshttp.MainActivity">
 
     <Button
         android:id="@+id/buttonRecuperar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recuperar dados" />
+        android:text="Executar ação" />
 
     <TextView
         android:id="@+id/textResultado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Resultado" />
+        android:text="Resultado"
+        android:textSize="24sp" />
 </LinearLayout>
