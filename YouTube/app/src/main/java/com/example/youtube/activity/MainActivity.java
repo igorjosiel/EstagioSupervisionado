@@ -15,6 +15,7 @@ import com.youtube.adapter.AdapterVideo;
 import com.youtube.api.YoutubeService;
 import com.youtube.helper.RetrofitConfig;
 import com.youtube.helper.YoutubeConfig;
+import com.youtube.model.Item;
 import com.youtube.model.Resultado;
 import com.youtube.model.Video;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerVideos;
     private MaterialSearchView searchView;
 
-    private List<Video> videos = new ArrayList<>();
+    private List<Item> videos = new ArrayList<>();
+    private Resultado resultado;
     private AdapterVideo adapterVideo;
 
     private Retrofit retrofit;
@@ -52,10 +54,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar( toolbar );
 
         recuperarVideos();
-        adapterVideo = new AdapterVideo(videos, this);
-        recyclerVideos.setHasFixedSize( true );
-        recyclerVideos.setLayoutManager(new LinearLayoutManager(this));
-        recyclerVideos.setAdapter( adapterVideo );
 
         //Configura métodos para SearchView
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
@@ -92,12 +90,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Resultado> call, Response<Resultado> response) {
                 Log.d("resultado", "resultado: " + response.toString() );
+                if( response.isSuccessful() ){
+                    resultado = response.body();
+                    videos = resultado.items;
+                    configurarRecyclerView();
+                }
             }
 
             @Override
             public void onFailure(Call<Resultado> call, Throwable t) {
+
             }
         });
+    }
+
+    public void configurarRecyclerView(){
+        adapterVideo = new AdapterVideo(videos, this);
+        recyclerVideos.setHasFixedSize( true );
+        recyclerVideos.setLayoutManager(new LinearLayoutManager(this));
+        recyclerVideos.setAdapter( adapterVideo );
     }
 
     @Override
