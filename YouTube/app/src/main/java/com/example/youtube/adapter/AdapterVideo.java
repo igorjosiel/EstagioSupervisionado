@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.youtube.R;
 import com.youtube.model.Item;
 import com.youtube.model.Video;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.MyViewHolder
 
         Item video = videos.get( position );
         holder.titulo.setText( video.snippet.title );
+
+        String url = video.snippet.thumbnails.high.url;
+        Picasso.get().load(url).into(holder.capa);
     }
 
     @Override
