@@ -17,10 +17,12 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.olxapp.R;
 import com.olxapp.helper.Permissoes;
+import com.olxapp.model.Anuncio;
 import com.santalu.maskedittext.MaskEditText;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
     private Spinner campoEstado, campoCategoria;
     private CurrencyEditText campoValor;
     private MaskEditText campoTelefone;
+    private Anuncio anuncio;
 
     private String[] permissoes = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -53,10 +56,73 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
         carregarDadosSpinner();
     }
 
-    public void salvarAnuncio(View view){
+    public void salvarAnuncio(){
 
-        String valor = campoTelefone.getText().toString();
-        Log.d("salvar", "salvarAnuncio: " + valor );
+        for (int i=0; i < listaFotosRecuperadas.size(); i++){
+            String urlImagem = listaFotosRecuperadas.get(i);
+            int tamanhoLista = listaFotosRecuperadas.size();
+        }
+    }
+
+    private Anuncio configurarAnuncio(){
+
+        String estado = campoEstado.getSelectedItem().toString();
+        String categoria = campoCategoria.getSelectedItem().toString();
+        String titulo = campoTitulo.getText().toString();
+        String valor = String.valueOf(campoValor.getRawValue());
+        String telefone = campoTelefone.getText().toString();
+        String descricao = campoDescricao.getText().toString();
+
+        Anuncio anuncio = new Anuncio();
+        anuncio.setEstado( estado );
+        anuncio.setCategoria(categoria);
+        anuncio.setTitulo(titulo);
+        anuncio.setValor(valor);
+        anuncio.setTelefone( telefone );
+        anuncio.setDescricao(descricao);
+
+        return anuncio;
+    }
+
+    public void validarDadosAnuncio(View view){
+
+        anuncio = configurarAnuncio();
+
+        if( listaFotosRecuperadas.size() != 0  ){
+            if( !anuncio.getEstado().isEmpty() ){
+                if( !anuncio.getCategoria().isEmpty() ){
+                    if( !anuncio.getTitulo().isEmpty() ){
+                        if( !anuncio.getValor().isEmpty() && !anuncio.getValor().equals("0") ){
+                            if( !anuncio.getTelefone().isEmpty()  ){
+                                if( !anuncio.getDescricao().isEmpty() ){
+
+                                    salvarAnuncio();
+
+                                }else {
+                                    exibirMensagemErro("Preencha o campo descrição");
+                                }
+                            }else {
+                                exibirMensagemErro("Preencha o campo telefone");
+                            }
+                        }else {
+                            exibirMensagemErro("Preencha o campo valor");
+                        }
+                    }else {
+                        exibirMensagemErro("Preencha o campo título");
+                    }
+                }else {
+                    exibirMensagemErro("Preencha o campo categoria");
+                }
+            }else {
+                exibirMensagemErro("Preencha o campo estado");
+            }
+        }else {
+            exibirMensagemErro("Selecione ao menos uma foto!");
+        }
+    }
+
+    private void exibirMensagemErro(String texto){
+        Toast.makeText(this, texto, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -111,6 +177,7 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
                 this, android.R.layout.simple_spinner_item,
                 estados
         );
+
         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
         campoEstado.setAdapter( adapter );
 
@@ -120,6 +187,7 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
                 this, android.R.layout.simple_spinner_item,
                 categorias
         );
+
         adapterCategoria.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
         campoCategoria.setAdapter( adapterCategoria );
     }
@@ -139,7 +207,6 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
         imagem2.setOnClickListener(this);
         imagem3.setOnClickListener(this);
 
-        //Configura localidade para pt -> portugues BR -> Brasil
         Locale locale = new Locale("pt", "BR");
         campoValor.setLocale( locale );
     }
