@@ -20,9 +20,6 @@ public class AnunciosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_anuncios);
 
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
-
-        //autenticacao.signOut();
-
     }
 
     @Override
@@ -53,6 +50,9 @@ public class AnunciosActivity extends AppCompatActivity {
             case R.id.menu_sair :
                 autenticacao.signOut();
                 invalidateOptionsMenu();
+                break;
+            case R.id.menu_anuncios :
+                startActivity(new Intent(getApplicationContext(),MeusAnunciosActivity.class));
                 break;
         }
 
