@@ -2,13 +2,13 @@ package com.olxapp.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +20,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.olxapp.R;
+import com.olxapp.helper.ConfiguracaoFirebase;
 import com.olxapp.helper.Permissoes;
 import com.olxapp.model.Anuncio;
 import com.santalu.maskedittext.MaskEditText;
@@ -28,6 +34,8 @@ import com.santalu.maskedittext.MaskEditText;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import dmax.dialog.SpotsDialog;
 
 public class CadastrarAnuncioActivity extends AppCompatActivity
             implements View.OnClickListener {
@@ -38,17 +46,22 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
     private CurrencyEditText campoValor;
     private MaskEditText campoTelefone;
     private Anuncio anuncio;
+    private StorageReference storage;
+    private AlertDialog dialog;
 
     private String[] permissoes = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE
     };
 
     private List<String> listaFotosRecuperadas = new ArrayList<>();
+    private List<String> listaURLFotos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar_anuncio);
+
+        storage = ConfiguracaoFirebase.getFirebaseStorage();
 
         Permissoes.validarPermissoes(permissoes, this, 1);
 
@@ -58,10 +71,54 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
 
     public void salvarAnuncio(){
 
+        dialog = new SpotsDialog.Builder()
+                .setContext( this )
+                .setMessage("Salvando Anúncio")
+                .setCancelable( false )
+                .build();
+        dialog.show();
+
         for (int i=0; i < listaFotosRecuperadas.size(); i++){
             String urlImagem = listaFotosRecuperadas.get(i);
             int tamanhoLista = listaFotosRecuperadas.size();
+            salvarFotoStorage(urlImagem, tamanhoLista, i );
         }
+    }
+
+    private void salvarFotoStorage(String urlString, final int totalFotos, int contador){
+
+	//Salvando no storage criando um nó
+        StorageReference imagemAnuncio = storage.child("imagens")
+                .child("anuncios")
+                .child( anuncio.getIdAnuncio() )
+                .child("imagem"+contador);
+
+        //Fazer upload do arquivo
+        UploadTask uploadTask = imagemAnuncio.putFile( Uri.parse(urlString) );
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                Uri firebaseUrl = taskSnapshot.getDownloadUrl();
+                String urlConvertida = firebaseUrl.toString();
+
+                listaURLFotos.add( urlConvertida );
+
+                if( totalFotos == listaURLFotos.size() ){
+                    anuncio.setFotos( listaURLFotos );
+                    anuncio.salvar();
+
+                    dialog.dismiss();
+                    finish();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                exibirMensagemErro("Falha ao fazer upload");
+                Log.i("INFO", "Falha ao fazer upload: " + e.getMessage());
+            }
+        });
     }
 
     private Anuncio configurarAnuncio(){
@@ -69,7 +126,7 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
         String estado = campoEstado.getSelectedItem().toString();
         String categoria = campoCategoria.getSelectedItem().toString();
         String titulo = campoTitulo.getText().toString();
-        String valor = String.valueOf(campoValor.getRawValue());
+        String valor = campoValor.getText().toString();
         String telefone = campoTelefone.getText().toString();
         String descricao = campoDescricao.getText().toString();
 
@@ -87,12 +144,13 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
     public void validarDadosAnuncio(View view){
 
         anuncio = configurarAnuncio();
+        String valor = String.valueOf(campoValor.getRawValue());
 
         if( listaFotosRecuperadas.size() != 0  ){
             if( !anuncio.getEstado().isEmpty() ){
                 if( !anuncio.getCategoria().isEmpty() ){
                     if( !anuncio.getTitulo().isEmpty() ){
-                        if( !anuncio.getValor().isEmpty() && !anuncio.getValor().equals("0") ){
+                        if( !valor.isEmpty() && !valor.equals("0") ){
                             if( !anuncio.getTelefone().isEmpty()  ){
                                 if( !anuncio.getDescricao().isEmpty() ){
 
@@ -177,7 +235,6 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
                 this, android.R.layout.simple_spinner_item,
                 estados
         );
-
         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
         campoEstado.setAdapter( adapter );
 
@@ -207,6 +264,7 @@ public class CadastrarAnuncioActivity extends AppCompatActivity
         imagem2.setOnClickListener(this);
         imagem3.setOnClickListener(this);
 
+        //Configura localidade para pt -> portugues BR -> Brasil
         Locale locale = new Locale("pt", "BR");
         campoValor.setLocale( locale );
     }
