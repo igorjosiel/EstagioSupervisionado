@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -24,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.olxapp.R;
 import com.olxapp.adapter.AdapterAnuncios;
 import com.olxapp.helper.ConfiguracaoFirebase;
+import com.olxapp.helper.RecyclerItemClickListener;
 import com.olxapp.model.Anuncio;
 
 import java.util.ArrayList;
@@ -62,6 +64,31 @@ public class AnunciosActivity extends AppCompatActivity {
         recyclerAnunciosPublicos.setAdapter( adapterAnuncios );
 
         recuperarAnunciosPublicos();
+
+        //Aplicar evento de clique
+        recyclerAnunciosPublicos.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        this,
+                        recyclerAnunciosPublicos,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Anuncio anuncioSelecionado = listaAnuncios.get( position );
+                                Intent i = new Intent(AnunciosActivity.this, DetalhesProdutoActivity.class);
+                                i.putExtra("anuncioSelecionado", anuncioSelecionado );
+                                startActivity( i );
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            }
+                        }
+                )
+        );
     }
 
     public void filtrarPorEstado(View view){
@@ -69,9 +96,10 @@ public class AnunciosActivity extends AppCompatActivity {
         AlertDialog.Builder dialogEstado = new AlertDialog.Builder(this);
         dialogEstado.setTitle("Selecione o estado desejado");
 
+        //Configurar spinner
         View viewSpinner = getLayoutInflater().inflate(R.layout.dialog_spinner, null);
 
-        //Configura spinner de estados
+        //Configuração do spinner de estados
         final Spinner spinnerEstado = viewSpinner.findViewById(R.id.spinnerFiltro);
         String[] estados = getResources().getStringArray(R.array.estados);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -109,9 +137,10 @@ public class AnunciosActivity extends AppCompatActivity {
             AlertDialog.Builder dialogEstado = new AlertDialog.Builder(this);
             dialogEstado.setTitle("Selecione a categoria desejada");
 
+            //Configuração spinner
             View viewSpinner = getLayoutInflater().inflate(R.layout.dialog_spinner, null);
 
-            //Configura spinner de categorias
+            //Configuração de spinner de categorias
             final Spinner spinnerCategoria = viewSpinner.findViewById(R.id.spinnerFiltro);
             String[] estados = getResources().getStringArray(R.array.categorias);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -148,7 +177,7 @@ public class AnunciosActivity extends AppCompatActivity {
 
     public void recuperarAnunciosPorCategoria(){
 
-        //Configura nó por categori
+        //Configura nó por categoria
         anunciosPublicosRef = ConfiguracaoFirebase.getFirebase()
                 .child("anuncios")
                 .child(filtroEstado)
