@@ -1,4 +1,4 @@
-package com.uber.cursoandroid.jamiltondamasceno.uber.activity;
+package com.uber.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -38,12 +38,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.uber.cursoandroid.jamiltondamasceno.uber.R;
-import com.uber.cursoandroid.jamiltondamasceno.uber.config.ConfiguracaoFirebase;
-import com.uber.cursoandroid.jamiltondamasceno.uber.helper.UsuarioFirebase;
-import com.uber.cursoandroid.jamiltondamasceno.uber.model.Destino;
-import com.uber.cursoandroid.jamiltondamasceno.uber.model.Requisicao;
-import com.uber.cursoandroid.jamiltondamasceno.uber.model.Usuario;
+import com.uber.R;
+import com.uber.config.ConfiguracaoFirebase;
+import com.uber.helper.UsuarioFirebase;
+import com.uber.model.Destino;
+import com.uber.model.Requisicao;
+import com.uber.model.Usuario;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,7 +54,6 @@ import java.util.Locale;
 public class PassageiroActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    //Componentes
     private EditText editDestino;
     private LinearLayout linearLayoutDestino;
     private Button buttonChamarUber;
@@ -68,7 +67,6 @@ public class PassageiroActivity extends AppCompatActivity
     private DatabaseReference firebaseRef;
     private Requisicao requisicao;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +74,7 @@ public class PassageiroActivity extends AppCompatActivity
 
         inicializarComponentes();
 
-        //Adiciona listener para status da requisição
         verificaStatusRequisicao();
-
     }
 
     private void verificaStatusRequisicao(){
@@ -107,36 +103,21 @@ public class PassageiroActivity extends AppCompatActivity
                             buttonChamarUber.setText("Cancelar Uber");
                             uberChamado = true;
                             break;
-
                     }
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //Recuperar localizacao do usuário
         recuperarLocalizacaoUsuario();
-
     }
 
     public void chamarUber(View view){
@@ -181,12 +162,10 @@ public class PassageiroActivity extends AppCompatActivity
                             }).setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
                                 }
                             });
                     AlertDialog dialog = builder.create();
                     dialog.show();
-
                 }
 
             }else {
@@ -196,11 +175,8 @@ public class PassageiroActivity extends AppCompatActivity
             }
 
         }else {
-            //Cancelar a requisição
-
             uberChamado = false;
         }
-
     }
 
     private void salvarRequisicao(Destino destino){
@@ -218,7 +194,6 @@ public class PassageiroActivity extends AppCompatActivity
 
         linearLayoutDestino.setVisibility( View.GONE );
         buttonChamarUber.setText("Cancelar Uber");
-
     }
 
     private Address recuperarEndereco(String endereco){
@@ -230,7 +205,6 @@ public class PassageiroActivity extends AppCompatActivity
                 Address address = listaEnderecos.get(0);
 
                 return address;
-
             }
 
         } catch (IOException e) {
@@ -238,7 +212,6 @@ public class PassageiroActivity extends AppCompatActivity
         }
 
         return null;
-
     }
 
     private void recuperarLocalizacaoUsuario() {
@@ -264,22 +237,18 @@ public class PassageiroActivity extends AppCompatActivity
                 mMap.moveCamera(
                         CameraUpdateFactory.newLatLngZoom(localPassageiro, 20)
                 );
-
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
             }
         };
 
@@ -292,8 +261,6 @@ public class PassageiroActivity extends AppCompatActivity
                     locationListener
             );
         }
-
-
     }
 
     @Override
@@ -321,20 +288,15 @@ public class PassageiroActivity extends AppCompatActivity
         toolbar.setTitle("Iniciar uma viagem");
         setSupportActionBar(toolbar);
 
-        //Inicializar componentes
         editDestino = findViewById(R.id.editDestino);
         linearLayoutDestino = findViewById(R.id.linearLayoutDestino);
         buttonChamarUber = findViewById(R.id.buttonChamarUber);
 
-        //Configurações iniciais
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
-
 }
