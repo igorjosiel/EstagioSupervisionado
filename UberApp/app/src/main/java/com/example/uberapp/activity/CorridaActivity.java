@@ -33,12 +33,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.uber.R;
 import com.uber.config.ConfiguracaoFirebase;
+import com.uber.helper.UsuarioFirebase;
 import com.uber.model.Requisicao;
 import com.uber.model.Usuario;
 
 public class CorridaActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
+    //componente
     private Button buttonAceitarCorrida;
 
     private GoogleMap mMap;
@@ -63,6 +65,7 @@ public class CorridaActivity extends AppCompatActivity
 
         inicializarComponentes();
 
+        //Recupera dados do usuário
         if( getIntent().getExtras().containsKey("idRequisicao")
                 && getIntent().getExtras().containsKey("motorista") ){
             Bundle extras = getIntent().getExtras();
@@ -75,6 +78,7 @@ public class CorridaActivity extends AppCompatActivity
             requisicaoAtiva = extras.getBoolean("requisicaoAtiva");
             verificaStatusRequisicao();
         }
+
     }
 
     private void verificaStatusRequisicao(){
@@ -85,6 +89,7 @@ public class CorridaActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                //Recupera requisição
                 requisicao = dataSnapshot.getValue(Requisicao.class);
                 if(requisicao != null){
                     passageiro = requisicao.getPassageiro();
@@ -95,12 +100,17 @@ public class CorridaActivity extends AppCompatActivity
                     statusRequisicao = requisicao.getStatus();
                     alteraInterfaceStatusRequisicao(statusRequisicao);
                 }
+
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
+
+
     }
 
     private void alteraInterfaceStatusRequisicao(String status){
@@ -113,20 +123,33 @@ public class CorridaActivity extends AppCompatActivity
                 requisicaoACaminho();
                 break;
         }
+
     }
 
     private void requisicaoAguardando(){
         buttonAceitarCorrida.setText("Aceitar corrida");
+
+        //Exibe marcador do motorista
+        adicionaMarcadorMotorista(localMotorista, motorista.getNome() );
+
+        mMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(localMotorista, 20)
+        );
+
     }
 
     private void requisicaoACaminho(){
         buttonAceitarCorrida.setText("A caminho do passageiro");
 
+        //Exibe marcador do motorista
         adicionaMarcadorMotorista(localMotorista, motorista.getNome() );
 
+        //Exibe marcador passageiro
         adicionaMarcadorPassageiro(localPassageiro, passageiro.getNome());
 
+        //Centralizar dois marcadores
         centralizarDoisMarcadores(marcadorMotorista, marcadorPassageiro);
+
     }
 
     private void centralizarDoisMarcadores(Marker marcador1, Marker marcador2){
@@ -145,6 +168,7 @@ public class CorridaActivity extends AppCompatActivity
         mMap.moveCamera(
                 CameraUpdateFactory.newLatLngBounds(bounds,largura,altura,espacoInterno)
         );
+
     }
 
     private void adicionaMarcadorMotorista(LatLng localizacao, String titulo){
@@ -158,6 +182,7 @@ public class CorridaActivity extends AppCompatActivity
                         .title(titulo)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.carro))
         );
+
     }
 
     private void adicionaMarcadorPassageiro(LatLng localizacao, String titulo){
@@ -171,13 +196,25 @@ public class CorridaActivity extends AppCompatActivity
                         .title(titulo)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.usuario))
         );
+
     }
 
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //Recuperar localizacao do usuário
         recuperarLocalizacaoUsuario();
+
     }
 
     private void recuperarLocalizacaoUsuario() {
@@ -188,26 +225,35 @@ public class CorridaActivity extends AppCompatActivity
             @Override
             public void onLocationChanged(Location location) {
 
+                //recuperar latitude e longitude
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 localMotorista = new LatLng(latitude, longitude);
 
+                //Atualizar GeoFire
+                UsuarioFirebase.atualizarDadosLocalizacao(latitude, longitude);
+
                 alteraInterfaceStatusRequisicao(statusRequisicao);
+
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
+
             }
 
             @Override
             public void onProviderEnabled(String provider) {
+
             }
 
             @Override
             public void onProviderDisabled(String provider) {
+
             }
         };
 
+        //Solicitar atualizações de localização
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -216,16 +262,20 @@ public class CorridaActivity extends AppCompatActivity
                     locationListener
             );
         }
+
+
     }
 
     public void aceitarCorrida(View view){
 
+        //Configura requisicao
         requisicao = new Requisicao();
         requisicao.setId( idRequisicao );
         requisicao.setMotorista( motorista );
         requisicao.setStatus( Requisicao.STATUS_A_CAMINHO );
 
         requisicao.atualizar();
+
     }
 
     private void inicializarComponentes(){
@@ -238,8 +288,10 @@ public class CorridaActivity extends AppCompatActivity
 
         buttonAceitarCorrida = findViewById(R.id.buttonAceitarCorrida);
 
+        //Configurações iniciais
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
 
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);

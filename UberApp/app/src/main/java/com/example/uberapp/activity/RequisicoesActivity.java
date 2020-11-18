@@ -29,8 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.uber.cursoandroid.jamiltondamasceno.uber.R;
-import com.uber.cursoandroid.jamiltondamasceno.uber.adpter.RequisicoesAdapter;
+import com.uber.R;
+import com.uber.adpter.RequisicoesAdapter;
 import com.uber.config.ConfiguracaoFirebase;
 import com.uber.helper.RecyclerItemClickListener;
 import com.uber.helper.UsuarioFirebase;
@@ -44,6 +44,7 @@ import java.util.List;
 
 public class RequisicoesActivity extends AppCompatActivity {
 
+    //Componentes
     private RecyclerView recyclerRequisicoes;
     private TextView textResultado;
 
@@ -63,7 +64,9 @@ public class RequisicoesActivity extends AppCompatActivity {
 
         inicializarComponentes();
 
+        //Recuperar localizacao do usuário
         recuperarLocalizacaoUsuario();
+
     }
 
     @Override
@@ -93,11 +96,13 @@ public class RequisicoesActivity extends AppCompatActivity {
                             || requisicao.getStatus().equals(Requisicao.STATUS_VIAGEM)){
                         abrirTelaCorrida(requisicao.getId(), motorista, true);
                     }
+
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 
@@ -111,8 +116,15 @@ public class RequisicoesActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
+                //recuperar latitude e longitude
                 String latitude = String.valueOf(location.getLatitude());
                 String longitude = String.valueOf(location.getLongitude());
+
+                //Atualizar GeoFire
+                UsuarioFirebase.atualizarDadosLocalizacao(
+                        location.getLatitude(),
+                        location.getLongitude()
+                );
 
                 if( !latitude.isEmpty() && !longitude.isEmpty() ){
                     motorista.setLatitude(latitude);
@@ -120,21 +132,26 @@ public class RequisicoesActivity extends AppCompatActivity {
                     locationManager.removeUpdates(locationListener);
                     adapter.notifyDataSetChanged();
                 }
+
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
+
             }
 
             @Override
             public void onProviderEnabled(String provider) {
+
             }
 
             @Override
             public void onProviderDisabled(String provider) {
+
             }
         };
 
+        //Solicitar atualizações de localização
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -143,6 +160,8 @@ public class RequisicoesActivity extends AppCompatActivity {
                     locationListener
             );
         }
+
+
     }
 
     @Override
@@ -176,19 +195,23 @@ public class RequisicoesActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Requisições");
 
+        //Configura componentes
         recyclerRequisicoes = findViewById(R.id.recyclerRequisicoes);
         textResultado = findViewById(R.id.textResultado);
 
+        //Configurações iniciais
         motorista = UsuarioFirebase.getDadosUsuarioLogado();
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
 
+        //Configurar RecyclerView
         adapter = new RequisicoesAdapter(listaRequisicoes, getApplicationContext(), motorista );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerRequisicoes.setLayoutManager( layoutManager );
         recyclerRequisicoes.setHasFixedSize(true);
         recyclerRequisicoes.setAdapter( adapter );
 
+        //Adiciona evento de clique no recycler
         recyclerRequisicoes.addOnItemTouchListener(
                 new RecyclerItemClickListener(
                         getApplicationContext(),
@@ -214,6 +237,7 @@ public class RequisicoesActivity extends AppCompatActivity {
         );
 
         recuperarRequisicoes();
+
     }
 
     private void recuperarRequisicoes(){
@@ -242,11 +266,15 @@ public class RequisicoesActivity extends AppCompatActivity {
                 }
 
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
+
     }
+
 }
