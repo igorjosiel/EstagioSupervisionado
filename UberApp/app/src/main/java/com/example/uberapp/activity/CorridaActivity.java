@@ -2,6 +2,7 @@ package com.uber.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,8 +13,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,7 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.uber.R;
-import com.config.ConfiguracaoFirebase;
+import com.uber.config.ConfiguracaoFirebase;
 import com.uber.model.Requisicao;
 import com.uber.model.Usuario;
 
@@ -50,6 +53,8 @@ public class CorridaActivity extends AppCompatActivity
     private DatabaseReference firebaseRef;
     private Marker marcadorMotorista;
     private Marker marcadorPassageiro;
+    private String statusRequisicao;
+    private boolean requisicaoAtiva;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,12 @@ public class CorridaActivity extends AppCompatActivity
                 && getIntent().getExtras().containsKey("motorista") ){
             Bundle extras = getIntent().getExtras();
             motorista = (Usuario) extras.getSerializable("motorista");
+            localMotorista = new LatLng(
+                    Double.parseDouble(motorista.getLatitude()),
+                    Double.parseDouble(motorista.getLongitude())
+            );
             idRequisicao = extras.getString("idRequisicao");
+            requisicaoAtiva = extras.getBoolean("requisicaoAtiva");
             verificaStatusRequisicao();
         }
     }
@@ -75,29 +85,34 @@ public class CorridaActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //Recupera requisição
                 requisicao = dataSnapshot.getValue(Requisicao.class);
-                passageiro = requisicao.getPassageiro();
-                localPassageiro = new LatLng(
-                        Double.parseDouble(passageiro.getLatitude()),
-                        Double.parseDouble(passageiro.getLongitude())
-                );
-
-                switch ( requisicao.getStatus() ){
-                    case Requisicao.STATUS_AGUARDANDO :
-                        requisicaoAguardando();
-                        break;
-                    case Requisicao.STATUS_A_CAMINHO :
-                        requisicaoACaminho();
-                        break;
+                if(requisicao != null){
+                    passageiro = requisicao.getPassageiro();
+                    localPassageiro = new LatLng(
+                            Double.parseDouble(passageiro.getLatitude()),
+                            Double.parseDouble(passageiro.getLongitude())
+                    );
+                    statusRequisicao = requisicao.getStatus();
+                    alteraInterfaceStatusRequisicao(statusRequisicao);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+    }
+
+    private void alteraInterfaceStatusRequisicao(String status){
+
+        switch ( status ){
+            case Requisicao.STATUS_AGUARDANDO :
+                requisicaoAguardando();
+                break;
+            case Requisicao.STATUS_A_CAMINHO :
+                requisicaoACaminho();
+                break;
+        }
     }
 
     private void requisicaoAguardando(){
@@ -107,13 +122,10 @@ public class CorridaActivity extends AppCompatActivity
     private void requisicaoACaminho(){
         buttonAceitarCorrida.setText("A caminho do passageiro");
 
-        //Exibe marcador do motorista
         adicionaMarcadorMotorista(localMotorista, motorista.getNome() );
 
-        //Exibe marcador passageiro
         adicionaMarcadorPassageiro(localPassageiro, passageiro.getNome());
 
-        //Centralizar dois marcadores
         centralizarDoisMarcadores(marcadorMotorista, marcadorPassageiro);
     }
 
@@ -176,21 +188,11 @@ public class CorridaActivity extends AppCompatActivity
             @Override
             public void onLocationChanged(Location location) {
 
-                //recuperar latitude e longitude
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 localMotorista = new LatLng(latitude, longitude);
 
-                mMap.clear();
-                mMap.addMarker(
-                        new MarkerOptions()
-                                .position(localMotorista)
-                                .title("Meu Local")
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.carro))
-                );
-                mMap.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(localMotorista, 20)
-                );
+                alteraInterfaceStatusRequisicao(statusRequisicao);
             }
 
             @Override
@@ -241,5 +243,18 @@ public class CorridaActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        if (requisicaoAtiva){
+            Toast.makeText(CorridaActivity.this,
+                    "Necessário encerrar a requisição atual!",
+                    Toast.LENGTH_SHORT).show();
+        }else {
+            Intent i = new Intent(CorridaActivity.this, RequisicoesActivity.class);
+            startActivity(i);
+        }
+        return false;
     }
 }
