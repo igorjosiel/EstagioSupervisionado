@@ -1,4 +1,4 @@
-package com.uber.activity;
+package com.uber.cursoandroid.jamiltondamasceno.uber.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -38,12 +38,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.uber.R;
-import com.uber.config.ConfiguracaoFirebase;
-import com.uber.helper.UsuarioFirebase;
-import com.uber.model.Destino;
-import com.uber.model.Requisicao;
-import com.uber.model.Usuario;
+import com.uber.cursoandroid.jamiltondamasceno.uber.R;
+import com.uber.cursoandroid.jamiltondamasceno.uber.config.ConfiguracaoFirebase;
+import com.uber.cursoandroid.jamiltondamasceno.uber.helper.UsuarioFirebase;
+import com.uber.cursoandroid.jamiltondamasceno.uber.model.Destino;
+import com.uber.cursoandroid.jamiltondamasceno.uber.model.Requisicao;
+import com.uber.cursoandroid.jamiltondamasceno.uber.model.Usuario;
 
 import java.io.IOException;
 import java.util.ArrayList;
