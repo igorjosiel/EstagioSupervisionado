@@ -42,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.uber.R;
 import com.uber.config.ConfiguracaoFirebase;
 import com.uber.helper.UsuarioFirebase;
+import com.uber.model.Destino;
 import com.uber.model.Requisicao;
 import com.uber.model.Usuario;
 
@@ -64,8 +65,10 @@ public class CorridaActivity extends AppCompatActivity
     private DatabaseReference firebaseRef;
     private Marker marcadorMotorista;
     private Marker marcadorPassageiro;
+    private Marker marcadorDestino;
     private String statusRequisicao;
     private boolean requisicaoAtiva;
+    private Destino destino;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,7 @@ public class CorridaActivity extends AppCompatActivity
                             Double.parseDouble(passageiro.getLongitude())
                     );
                     statusRequisicao = requisicao.getStatus();
+                    destino = requisicao.getDestino();
                     alteraInterfaceStatusRequisicao(statusRequisicao);
                 }
 
@@ -130,6 +134,9 @@ public class CorridaActivity extends AppCompatActivity
                 break;
             case Requisicao.STATUS_A_CAMINHO :
                 requisicaoACaminho();
+                break;
+            case Requisicao.STATUS_VIAGEM :
+                requisicaoViagem();
                 break;
         }
 
@@ -163,11 +170,36 @@ public class CorridaActivity extends AppCompatActivity
         centralizarDoisMarcadores(marcadorMotorista, marcadorPassageiro);
 
         //Inicia monitoramento do motorista / passageiro
-        iniciarMonitoramentoCorrida(passageiro, motorista);
+        iniciarMonitoramento(motorista, localPassageiro, Requisicao.STATUS_VIAGEM );
 
     }
 
-    private void iniciarMonitoramentoCorrida(Usuario p, Usuario m){
+
+    private void requisicaoViagem(){
+
+        //Altera interface
+        fabRota.setVisibility(View.VISIBLE);
+        buttonAceitarCorrida.setText("A caminho do destino");
+
+        //Exibe marcador do motorista
+        adicionaMarcadorMotorista(localMotorista, motorista.getNome());
+
+        //Exibe marcador de destino
+        LatLng localDestino = new LatLng(
+                Double.parseDouble(destino.getLatitude()),
+                Double.parseDouble(destino.getLongitude())
+        );
+        adicionaMarcadorDestino(localDestino, "Destino");
+
+        //Centraliza marcadores motorista / destino
+        centralizarDoisMarcadores(marcadorMotorista, marcadorDestino);
+
+        //Inicia monitoramento do motorista / passageiro
+        iniciarMonitoramento(motorista, localDestino, Requisicao.STATUS_FINALIZADA );
+
+    }
+
+    private void iniciarMonitoramento(final Usuario uOrigem, LatLng localDestino, final String status){
 
         //Inicializar GeoFire
         DatabaseReference localUsuario = ConfiguracaoFirebase.getFirebaseDatabase()
@@ -177,25 +209,25 @@ public class CorridaActivity extends AppCompatActivity
         //Adiciona círculo no passageiro
         final Circle circulo = mMap.addCircle(
                 new CircleOptions()
-                .center( localPassageiro )
+                .center( localDestino )
                 .radius(50)//em metros
                 .fillColor(Color.argb(90,255, 153,0))
                 .strokeColor(Color.argb(190,255,152,0))
         );
 
         final GeoQuery geoQuery = geoFire.queryAtLocation(
-                new GeoLocation(localPassageiro.latitude, localPassageiro.longitude),
+                new GeoLocation(localDestino.latitude, localDestino.longitude),
                 0.05//em km (0.05 50 metros)
         );
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
 
-                if( key.equals(motorista.getId()) ){
+                if( key.equals(uOrigem.getId()) ){
                     //Log.d("onKeyEntered", "onKeyEntered: motorista está dentro da área!");
 
                     //Altera status da requisicao
-                    requisicao.setStatus(Requisicao.STATUS_VIAGEM);
+                    requisicao.setStatus(status);
                     requisicao.atualizarStatus();
 
                     //Remove listener
@@ -272,6 +304,23 @@ public class CorridaActivity extends AppCompatActivity
                         .position(localizacao)
                         .title(titulo)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.usuario))
+        );
+
+    }
+
+    private void adicionaMarcadorDestino(LatLng localizacao, String titulo){
+
+        if( marcadorPassageiro != null )
+            marcadorPassageiro.remove();
+
+        if( marcadorDestino != null )
+            marcadorDestino.remove();
+
+        marcadorDestino = mMap.addMarker(
+                new MarkerOptions()
+                        .position(localizacao)
+                        .title(titulo)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.destino))
         );
 
     }
@@ -391,7 +440,8 @@ public class CorridaActivity extends AppCompatActivity
                             lon = String.valueOf(localPassageiro.longitude);
                             break;
                         case Requisicao.STATUS_VIAGEM :
-
+                            lat = destino.getLatitude();
+                            lon = destino.getLongitude();
                             break;
                     }
 
