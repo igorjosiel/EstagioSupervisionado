@@ -1,14 +1,10 @@
-package br.com.ifood.cursoandroid.ifood.helper;
+package br.ifood.helper;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-/**
- * Created by jamiltondamasceno
- */
 
 public class ConfiguracaoFirebase {
 
