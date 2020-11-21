@@ -56,19 +56,6 @@ import java.util.Locale;
 public class PassageiroActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    /*
-    * Lat/lon destino:-23.556407, -46.662365 (Av. Paulista, 2439)
-    * Lat/lon passageiro: -23.562791, -46.654668
-    * Lat/lon Motorista (a caminho):
-    *   longe: -23.571139, -46.660936
-    *   inicial: -23.563196, -46.650607
-    *   intermediaria: -23.564801, -46.652196
-    *   final: -23.562801, -46.654660
-    * Encerramento intermediário: -23.557499, -46.661084
-    * Encerramento da corrida: -23.556439, -46.662313
-    * */
-
-    //Componentes
     private EditText editDestino;
     private LinearLayout linearLayoutDestino;
     private Button buttonChamarUber;
@@ -90,7 +77,6 @@ public class PassageiroActivity extends AppCompatActivity
     private Usuario motorista;
     private LatLng localMotorista;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,9 +84,7 @@ public class PassageiroActivity extends AppCompatActivity
 
         inicializarComponentes();
 
-        //Adiciona listener para status da requisição
         verificaStatusRequisicao();
-
     }
 
     private void verificaStatusRequisicao(){
@@ -140,21 +124,16 @@ public class PassageiroActivity extends AppCompatActivity
                         }
                         alteraInterfaceStatusRequisicao(statusRequisicao);
                     }
-
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     private void alteraInterfaceStatusRequisicao(String status){
-
 
         switch (requisicao.getStatus()){
             case Requisicao.STATUS_AGUARDANDO :
@@ -169,9 +148,7 @@ public class PassageiroActivity extends AppCompatActivity
             case Requisicao.STATUS_FINALIZADA :
                 requisicaoFinalizada();
                 break;
-
         }
-
     }
 
     private void requisicaoAguardando(){
@@ -180,10 +157,8 @@ public class PassageiroActivity extends AppCompatActivity
         buttonChamarUber.setText("Cancelar Uber");
         uberChamado = true;
 
-        //Adiciona marcador passageiro
         adicionaMarcadorPassageiro(localPassageiro, passageiro.getNome());
         centralizarMarcador(localPassageiro);
-
     }
 
     private void requisicaoACaminho(){
@@ -192,23 +167,17 @@ public class PassageiroActivity extends AppCompatActivity
         buttonChamarUber.setText("Motorista a caminho");
         uberChamado = true;
 
-        //Adiciona marcador passageiro
         adicionaMarcadorPassageiro(localPassageiro, passageiro.getNome());
 
-        //Adiciona marcador motorista
         adicionaMarcadorMotorista(localMotorista, motorista.getNome());
 
-        //Centralizar passageiro / motorista
         centralizarDoisMarcadores(marcadorMotorista, marcadorPassageiro);
-
     }
 
     private void requisicaoViagem(){
-
     }
 
     private void requisicaoFinalizada(){
-
     }
 
     private void adicionaMarcadorPassageiro(LatLng localizacao, String titulo){
@@ -222,7 +191,6 @@ public class PassageiroActivity extends AppCompatActivity
                         .title(titulo)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.usuario))
         );
-
     }
 
     private void adicionaMarcadorMotorista(LatLng localizacao, String titulo){
@@ -236,7 +204,6 @@ public class PassageiroActivity extends AppCompatActivity
                         .title(titulo)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.carro))
         );
-
     }
 
     private void centralizarMarcador(LatLng local){
@@ -261,30 +228,18 @@ public class PassageiroActivity extends AppCompatActivity
         mMap.moveCamera(
                 CameraUpdateFactory.newLatLngBounds(bounds,largura,altura,espacoInterno)
         );
-
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //Recuperar localizacao do usuário
         recuperarLocalizacaoUsuario();
-
     }
 
     public void chamarUber(View view){
 
-        if( !uberChamado ){//Uber não foi chamado
+        if( !uberChamado ){
 
             String enderecoDestino = editDestino.getText().toString();
 
@@ -310,13 +265,12 @@ public class PassageiroActivity extends AppCompatActivity
                     mensagem.append( "\nCep: " + destino.getCep() );
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                            .setTitle("Confirme seu endereco!")
+                            .setTitle("Confirme o seu endereco!")
                             .setMessage(mensagem)
                             .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    //salvar requisição
                                     salvarRequisicao( destino );
                                     uberChamado = true;
 
@@ -329,7 +283,6 @@ public class PassageiroActivity extends AppCompatActivity
                             });
                     AlertDialog dialog = builder.create();
                     dialog.show();
-
                 }
 
             }else {
@@ -339,11 +292,9 @@ public class PassageiroActivity extends AppCompatActivity
             }
 
         }else {
-            //Cancelar a requisição
-
+            //Cancela a requisição
             uberChamado = false;
         }
-
     }
 
     private void salvarRequisicao(Destino destino){
@@ -361,7 +312,6 @@ public class PassageiroActivity extends AppCompatActivity
 
         linearLayoutDestino.setVisibility( View.GONE );
         buttonChamarUber.setText("Cancelar Uber");
-
     }
 
     private Address recuperarEndereco(String endereco){
@@ -373,7 +323,6 @@ public class PassageiroActivity extends AppCompatActivity
                 Address address = listaEnderecos.get(0);
 
                 return address;
-
             }
 
         } catch (IOException e) {
@@ -381,7 +330,6 @@ public class PassageiroActivity extends AppCompatActivity
         }
 
         return null;
-
     }
 
     private void recuperarLocalizacaoUsuario() {
@@ -392,12 +340,11 @@ public class PassageiroActivity extends AppCompatActivity
             @Override
             public void onLocationChanged(Location location) {
 
-                //recuperar latitude e longitude
+                //Recuperar latitude e longitude
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 localPassageiro = new LatLng(latitude, longitude);
 
-                //Atualizar GeoFire
                 UsuarioFirebase.atualizarDadosLocalizacao(latitude, longitude);
 
                 mMap.clear();
@@ -410,26 +357,22 @@ public class PassageiroActivity extends AppCompatActivity
                 mMap.moveCamera(
                         CameraUpdateFactory.newLatLngZoom(localPassageiro, 20)
                 );
-
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
             }
         };
 
-        //Solicitar atualizações de localização
+        //Solicitar ao usuário as atualizações de localização
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -438,8 +381,6 @@ public class PassageiroActivity extends AppCompatActivity
                     locationListener
             );
         }
-
-
     }
 
     @Override
@@ -467,20 +408,15 @@ public class PassageiroActivity extends AppCompatActivity
         toolbar.setTitle("Iniciar uma viagem");
         setSupportActionBar(toolbar);
 
-        //Inicializar componentes
         editDestino = findViewById(R.id.editDestino);
         linearLayoutDestino = findViewById(R.id.linearLayoutDestino);
         buttonChamarUber = findViewById(R.id.buttonChamarUber);
 
-        //Configurações iniciais
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
-
 }

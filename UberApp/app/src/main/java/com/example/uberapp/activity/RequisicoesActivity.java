@@ -44,7 +44,6 @@ import java.util.List;
 
 public class RequisicoesActivity extends AppCompatActivity {
 
-    //Componentes
     private RecyclerView recyclerRequisicoes;
     private TextView textResultado;
 
@@ -64,9 +63,7 @@ public class RequisicoesActivity extends AppCompatActivity {
 
         inicializarComponentes();
 
-        //Recuperar localizacao do usuário
         recuperarLocalizacaoUsuario();
-
     }
 
     @Override
@@ -98,16 +95,13 @@ public class RequisicoesActivity extends AppCompatActivity {
                         motorista = requisicao.getMotorista();
                         abrirTelaCorrida(requisicao.getId(), motorista, true);
                     }
-
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     private void recuperarLocalizacaoUsuario() {
@@ -118,11 +112,10 @@ public class RequisicoesActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
-                //recuperar latitude e longitude
+                //Recuperar a latitude e longitude
                 String latitude = String.valueOf(location.getLatitude());
                 String longitude = String.valueOf(location.getLongitude());
 
-                //Atualizar GeoFire
                 UsuarioFirebase.atualizarDadosLocalizacao(
                         location.getLatitude(),
                         location.getLongitude()
@@ -136,26 +129,22 @@ public class RequisicoesActivity extends AppCompatActivity {
                     locationManager.removeUpdates(locationListener);
                     adapter.notifyDataSetChanged();
                 }
-
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
             }
         };
 
-        //Solicitar atualizações de localização
+        //Solicitar ao usuário as atualizações de localização
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -164,8 +153,6 @@ public class RequisicoesActivity extends AppCompatActivity {
                     locationListener
             );
         }
-
-
     }
 
     @Override
@@ -199,7 +186,6 @@ public class RequisicoesActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Requisições");
 
-        //Configura componentes
         recyclerRequisicoes = findViewById(R.id.recyclerRequisicoes);
         textResultado = findViewById(R.id.textResultado);
 
@@ -208,7 +194,7 @@ public class RequisicoesActivity extends AppCompatActivity {
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
 
-        //Configurar RecyclerView
+        //Configurar o RecyclerView
         adapter = new RequisicoesAdapter(listaRequisicoes, getApplicationContext(), motorista );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerRequisicoes.setLayoutManager( layoutManager );
@@ -216,12 +202,11 @@ public class RequisicoesActivity extends AppCompatActivity {
         recyclerRequisicoes.setAdapter( adapter );
 
         recuperarRequisicoes();
-
     }
 
     private void adicionaEventoCliqueRecyclerView(){
 
-        //Adiciona evento de clique no recycler
+        //Adicionando um evento de clique no RecyclerView
         recyclerRequisicoes.addOnItemTouchListener(
                 new RecyclerItemClickListener(
                         getApplicationContext(),
@@ -235,17 +220,14 @@ public class RequisicoesActivity extends AppCompatActivity {
 
                             @Override
                             public void onLongItemClick(View view, int position) {
-
                             }
 
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                             }
                         }
                 )
         );
-
     }
 
     private void recuperarRequisicoes(){
@@ -274,15 +256,11 @@ public class RequisicoesActivity extends AppCompatActivity {
                 }
 
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
-
 }

@@ -38,7 +38,6 @@ public class UsuarioFirebase {
         usuario.setNome( firebaseUser.getDisplayName() );
 
         return usuario;
-
     }
 
     public static boolean atualizarNomeUsuario(String nome){
@@ -53,7 +52,7 @@ public class UsuarioFirebase {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if( !task.isSuccessful() ){
-                        Log.d("Perfil", "Erro ao atualizar nome de perfil.");
+                        Log.d("Perfil", "Erro ao atualizar seu nome de perfil.");
                     }
                 }
             });
@@ -64,7 +63,6 @@ public class UsuarioFirebase {
             e.printStackTrace();
             return false;
         }
-
     }
 
     public static void redirecionaUsuarioLogado(final Activity activity){
@@ -89,29 +87,24 @@ public class UsuarioFirebase {
                         Intent i = new Intent(activity, PassageiroActivity.class);
                         activity.startActivity(i);
                     }
-
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
         }
-
     }
 
     public static void atualizarDadosLocalizacao(double lat, double lon){
 
-        //Define nó de local de usuário
         DatabaseReference localUsuario = ConfiguracaoFirebase.getFirebaseDatabase()
                 .child("local_usuario");
         GeoFire geoFire = new GeoFire(localUsuario);
 
-        //Recupera dados usuário logado
         Usuario usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
 
-        //Configura localização do usuário
+        //Configurando a localização do usuário logado
         geoFire.setLocation(
                 usuarioLogado.getId(),
                 new GeoLocation(lat, lon),
@@ -119,7 +112,7 @@ public class UsuarioFirebase {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         if( error != null ){
-                            Log.d("Erro", "Erro ao salvar local!");
+                            Log.d("Erro", "Erro ao salvar o local!");
                         }
                     }
                 }

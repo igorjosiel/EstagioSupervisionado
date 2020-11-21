@@ -19,8 +19,7 @@ public class Local {
         localFinal.setLatitude( latLngFinal.latitude );
         localFinal.setLongitude( latLngFinal.longitude );
 
-        //Calcula distancia - Resultado em Metros
-        // dividir por 1000 para converter em KM
+        //Calcular a distância - Resultado em Metros dividindo por 1000 para converter em KM
         float distancia = localInicial.distanceTo(localFinal) / 1000;
 
         return distancia;
@@ -30,7 +29,7 @@ public class Local {
 
         String distanciaFormatada;
         if( distancia < 1 ){
-            distancia = distancia * 1000;//em Metros
+            distancia = distancia * 1000;//Em Metros
             distanciaFormatada = Math.round( distancia ) + " M ";
         }else {
             DecimalFormat decimal = new DecimalFormat("0.0");

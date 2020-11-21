@@ -31,7 +31,6 @@ public class Requisicao {
         setId( idRequisicao );
 
         requisicoes.child( getId() ).setValue(this);
-
     }
 
     public void atualizar(){
@@ -46,7 +45,6 @@ public class Requisicao {
         objeto.put("status", getStatus());
 
         requisicao.updateChildren( objeto );
-
     }
 
     public void atualizarStatus(){
@@ -60,7 +58,6 @@ public class Requisicao {
         objeto.put("status", getStatus());
 
         requisicao.updateChildren( objeto );
-
     }
 
     public void atualizarLocalizacaoMotorista(){
@@ -78,9 +75,7 @@ public class Requisicao {
         objeto.put("longitude", getMotorista().getLongitude());
 
         requisicao.updateChildren( objeto );
-
     }
-
 
     public String getId() {
         return id;

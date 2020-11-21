@@ -45,9 +45,9 @@ public class CadastroActivity extends AppCompatActivity {
         String textoEmail = campoEmail.getText().toString();
         String textoSenha = campoSenha.getText().toString();
 
-        if( !textoNome.isEmpty() ) {//verifica se nome não está vazio
-            if( !textoEmail.isEmpty() ) {//verifica se e-mail não está vazio
-                if( !textoSenha.isEmpty() ) {//verifica se senha não está vazia
+        if( !textoNome.isEmpty() ) {
+            if( !textoEmail.isEmpty() ) {
+                if( !textoSenha.isEmpty() ) {
 
                     Usuario usuario = new Usuario();
                     usuario.setNome( textoNome );
@@ -120,11 +120,11 @@ public class CadastroActivity extends AppCompatActivity {
                     try {
                         throw task.getException();
                     }catch ( FirebaseAuthWeakPasswordException e){
-                        excecao = "Digite uma senha mais forte!";
+                        excecao = "Por favor, digite uma senha mais forte!";
                     }catch ( FirebaseAuthInvalidCredentialsException e){
-                        excecao= "Por favor, digite um e-mail válido";
+                        excecao= "Por favor,igite um e-mail válido";
                     }catch ( FirebaseAuthUserCollisionException e){
-                        excecao = "Este conta já foi cadastrada";
+                        excecao = "Este conta já está cadastrada no sistema";
                     }catch (Exception e){
                         excecao = "Erro ao cadastrar usuário: "  + e.getMessage();
                         e.printStackTrace();

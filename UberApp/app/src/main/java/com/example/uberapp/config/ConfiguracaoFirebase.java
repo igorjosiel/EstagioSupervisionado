@@ -14,6 +14,7 @@ public class ConfiguracaoFirebase {
         if ( database == null ){
             database = FirebaseDatabase.getInstance().getReference();
         }
+
         return database;
     }
 
