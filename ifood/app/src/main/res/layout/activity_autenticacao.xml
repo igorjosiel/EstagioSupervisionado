@@ -9,7 +9,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="br.ifood.activity.AutenticacaoActivity">
+    tools:context="br.com.AutenticacaoActivity">
 
     <ImageView
         android:id="@+id/imageView2"

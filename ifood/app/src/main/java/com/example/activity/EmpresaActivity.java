@@ -9,28 +9,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import br.com.ifood.R;
-import br.com.ifood.helper.ConfiguracaoFirebase;
+import br.com.ifood..helper.ConfiguracaoFirebase;
 
-public class HomeActivity extends AppCompatActivity {
+public class EmpresaActivity extends AppCompatActivity {
 
     private FirebaseAuth autenticacao;
-    private MaterialSearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_empresa);
 
-        inicializarComponentes();
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
         //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Ifood");
+        toolbar.setTitle("Ifood - empresa");
         setSupportActionBar(toolbar);
+
 
     }
 
@@ -38,11 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_usuario, menu);
-
-        //Configurar botao de pesquisa
-        MenuItem item = menu.findItem(R.id.menuPesquisa);
-        searchView.setMenuItem(item);
+        inflater.inflate(R.menu.menu_empresa, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -57,13 +51,12 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.menuConfiguracoes :
                 abrirConfiguracoes();
                 break;
+            case R.id.menuNovoProduto :
+                abrirNovoProduto();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void inicializarComponentes(){
-        searchView = findViewById(R.id.materialSearchView);
     }
 
     private void deslogarUsuario(){
@@ -76,7 +69,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void abrirConfiguracoes(){
-        startActivity(new Intent(HomeActivity.this, ConfiguracoesUsuarioActivity.class));
+        startActivity(new Intent(EmpresaActivity.this, ConfiguracoesEmpresaActivity.class));
+    }
+
+    private void abrirNovoProduto(){
+        startActivity(new Intent(EmpresaActivity.this, NovoProdutoEmpresaActivity.class));
     }
 
 }
