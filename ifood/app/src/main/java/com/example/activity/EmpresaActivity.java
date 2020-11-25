@@ -43,27 +43,21 @@ public class EmpresaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa);
 
-        //Configurações iniciais
         inicializarComponentes();
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         idUsuarioLogado = UsuarioFirebase.getIdUsuario();
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Ifood - empresa");
         setSupportActionBar(toolbar);
 
-        //Configura recyclerview
         recyclerProdutos.setLayoutManager(new LinearLayoutManager(this));
         recyclerProdutos.setHasFixedSize(true);
         adapterProduto = new AdapterProduto(produtos, this);
-        recyclerProdutos.setAdapter( adapterProduto );
 
-        //Recupera produtos para empresa
         recuperarProdutos();
 
-        //Adiciona evento de clique no recyclerview
         recyclerProdutos.addOnItemTouchListener(
                 new RecyclerItemClickListener(
                         this,
@@ -71,7 +65,6 @@ public class EmpresaActivity extends AppCompatActivity {
                         new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-
                             }
 
                             @Override
@@ -79,19 +72,17 @@ public class EmpresaActivity extends AppCompatActivity {
                                 Produto produtoSelecionado = produtos.get(position);
                                 produtoSelecionado.remover();
                                 Toast.makeText(EmpresaActivity.this,
-                                        "Produto excluído com sucesso!",
+                                        "Produto removido com sucesso!",
                                         Toast.LENGTH_SHORT)
                                         .show();
                             }
 
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                             }
                         }
                 )
         );
-
     }
 
     private void recuperarProdutos(){
@@ -110,15 +101,12 @@ public class EmpresaActivity extends AppCompatActivity {
                 }
 
                 adapterProduto.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     private void inicializarComponentes(){
@@ -168,5 +156,4 @@ public class EmpresaActivity extends AppCompatActivity {
     private void abrirNovoProduto(){
         startActivity(new Intent(EmpresaActivity.this, NovoProdutoEmpresaActivity.class));
     }
-
 }

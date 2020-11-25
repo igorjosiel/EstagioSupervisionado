@@ -33,7 +33,6 @@ public class Pedido {
                 .child( idEmp )
                 .child( idUsu );
         setIdPedido( pedidoRef.push().getKey() );
-
     }
 
     public void salvar(){
@@ -44,7 +43,6 @@ public class Pedido {
                 .child( getIdEmpresa() )
                 .child( getIdUsuario() );
         pedidoRef.setValue( this );
-
     }
 
     public String getIdUsuario() {

@@ -29,20 +29,16 @@ public class ConfiguracoesUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes_usuario);
 
-        //Configurações iniciais
         inicializarComponentes();
         idUsuario = UsuarioFirebase.getIdUsuario();
         firebaseRef = ConfiguracaoFirebase.getFirebase();
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Configurações usuário");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Recupera dados do usuário
         recuperarDadosUsuario();
-
     }
 
     private void recuperarDadosUsuario(){
@@ -59,21 +55,18 @@ public class ConfiguracoesUsuarioActivity extends AppCompatActivity {
                     Usuario usuario = dataSnapshot.getValue(Usuario.class);
                     editUsuarioNome.setText( usuario.getNome() );
                     editUsuarioEndereco.setText( usuario.getEndereco() );
-
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     public void validarDadosUsuario(View view){
 
-        //Valida se os campos foram preenchidos
+        //Validação para ver se os campos foram preenchidos
         String nome = editUsuarioNome.getText().toString();
         String endereco = editUsuarioEndereco.getText().toString();
 
@@ -90,12 +83,11 @@ public class ConfiguracoesUsuarioActivity extends AppCompatActivity {
                 finish();
 
             }else{
-                exibirMensagem("Digite seu endereço completo!");
+                exibirMensagem("Digite seu endereço completo: ");
             }
         }else{
-            exibirMensagem("Digite seu nome!");
+            exibirMensagem("Digite seu nome: ");
         }
-
     }
 
     private void exibirMensagem(String texto){
@@ -107,5 +99,4 @@ public class ConfiguracoesUsuarioActivity extends AppCompatActivity {
         editUsuarioNome = findViewById(R.id.editUsuarioNome);
         editUsuarioEndereco = findViewById(R.id.editUsuarioEndereco);
     }
-
 }

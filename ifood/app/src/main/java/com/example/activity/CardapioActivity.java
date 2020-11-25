@@ -63,12 +63,11 @@ public class CardapioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cardapio);
 
-        //Configurações iniciais
         inicializarComponentes();
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         idUsuarioLogado = UsuarioFirebase.getIdUsuario();
 
-        //Recuperar empresa selecionada
+        //Recuperar a empresa selecionada
         Bundle bundle = getIntent().getExtras();
         if( bundle != null ){
             empresaSelecionada = (Empresa) bundle.getSerializable("empresa");
@@ -78,22 +77,18 @@ public class CardapioActivity extends AppCompatActivity {
 
             String url = empresaSelecionada.getUrlImagem();
             Picasso.get().load(url).into(imageEmpresaCardapio);
-
         }
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Cardápio");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Configura recyclerview
         recyclerProdutosCardapio.setLayoutManager(new LinearLayoutManager(this));
         recyclerProdutosCardapio.setHasFixedSize(true);
         adapterProduto = new AdapterProduto(produtos, this);
         recyclerProdutosCardapio.setAdapter( adapterProduto );
 
-        //Configurar evento de clique
         recyclerProdutosCardapio.addOnItemTouchListener(
                 new RecyclerItemClickListener(
                         this,
@@ -106,28 +101,24 @@ public class CardapioActivity extends AppCompatActivity {
 
                             @Override
                             public void onLongItemClick(View view, int position) {
-
                             }
 
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                             }
                         }
                 )
         );
 
-        //Recupera produtos para empresa
         recuperarProdutos();
         recuperarDadosUsuario();
-
     }
 
     private void confirmarQuantidade(final int posicao){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Quantidade");
-        builder.setMessage("Digite a quantidade");
+        builder.setTitle("Quantidade:");
+        builder.setMessage("Digite a quantidade: ");
 
         final EditText editQuantidade = new EditText(this);
         editQuantidade.setText("1");
@@ -157,27 +148,23 @@ public class CardapioActivity extends AppCompatActivity {
                 pedidoRecuperado.setEndereco( usuario.getEndereco() );
                 pedidoRecuperado.setItens( itensCarrinho );
                 pedidoRecuperado.salvar();
-
-
             }
         });
 
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
     private void recuperarDadosUsuario() {
 
         dialog = new SpotsDialog.Builder()
                 .setContext(this)
-                .setMessage("Carregando dados")
+                .setMessage("Carregando dados...")
                 .setCancelable( false )
                 .build();
         dialog.show();
@@ -197,10 +184,8 @@ public class CardapioActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     private void recuperPedido() {
@@ -223,7 +208,6 @@ public class CardapioActivity extends AppCompatActivity {
                     pedidoRecuperado = dataSnapshot.getValue(Pedido.class);
                     itensCarrinho = pedidoRecuperado.getItens();
 
-
                     for(ItemPedido itemPedido: itensCarrinho){
 
                         int qtde = itemPedido.getQuantidade();
@@ -231,9 +215,7 @@ public class CardapioActivity extends AppCompatActivity {
 
                         totalCarrinho += (qtde * preco);
                         qtdItensCarrinho += qtde;
-
                     }
-
                 }
 
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -242,17 +224,12 @@ public class CardapioActivity extends AppCompatActivity {
                 textCarrinhoTotal.setText("R$ " + df.format( totalCarrinho ) );
 
                 dialog.dismiss();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
-
-
     }
 
     private void recuperarProdutos(){
@@ -271,15 +248,12 @@ public class CardapioActivity extends AppCompatActivity {
                 }
 
                 adapterProduto.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override
@@ -310,7 +284,5 @@ public class CardapioActivity extends AppCompatActivity {
 
         textCarrinhoQtd = findViewById(R.id.textCarrinhoQtd);
         textCarrinhoTotal = findViewById(R.id.textCarrinhoTotal);
-
     }
-
 }

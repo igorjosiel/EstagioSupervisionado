@@ -39,10 +39,8 @@ public class AdapterEmpresa extends RecyclerView.Adapter<AdapterEmpresa.MyViewHo
         holder.tempo.setText(empresa.getTempo() + " Min");
         holder.entrega.setText("R$ " + empresa.getPrecoEntrega().toString());
 
-        //Carregar imagem
         String urlImagem = empresa.getUrlImagem();
         Picasso.get().load( urlImagem ).into( holder.imagemEmpresa );
-
     }
 
     @Override

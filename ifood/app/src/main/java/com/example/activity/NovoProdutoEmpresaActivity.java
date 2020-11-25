@@ -25,21 +25,18 @@ public class NovoProdutoEmpresaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_novo_produto_empresa);
 
-        /*Configurações inicias*/
         inicializarComponentes();
         idUsuarioLogado = UsuarioFirebase.getIdUsuario();
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Novo produto");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     public void validarDadosProduto(View view){
 
-        //Valida se os campos foram preenchidos
+        //Validação para ver se os campos foram preenchidos
         String nome = editProdutoNome.getText().toString();
         String descricao = editProdutoDescricao.getText().toString();
         String preco = editProdutoPreco.getText().toString();
@@ -59,15 +56,14 @@ public class NovoProdutoEmpresaActivity extends AppCompatActivity {
                     exibirMensagem("Produto salvo com sucesso!");
 
                 }else{
-                    exibirMensagem("Digite um preço para o produto");
+                    exibirMensagem("Digite um preço para o produto: ");
                 }
             }else{
-                exibirMensagem("Digite uma descrição para o produto");
+                exibirMensagem("Digite uma descrição para o produto: ");
             }
         }else{
-            exibirMensagem("Digite um nome para o produto");
+            exibirMensagem("Digite um nome para o produto: ");
         }
-
     }
 
     private void exibirMensagem(String texto){
@@ -80,5 +76,4 @@ public class NovoProdutoEmpresaActivity extends AppCompatActivity {
         editProdutoNome = findViewById(R.id.editProdutoNome);
         editProdutoPreco = findViewById(R.id.editProdutoPreco);
     }
-
 }

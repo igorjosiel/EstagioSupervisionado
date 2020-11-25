@@ -22,7 +22,6 @@ public class Empresa {
         DatabaseReference empresaRef = firebaseRef.child("empresas")
                 .child( getIdUsuario() );
         empresaRef.setValue(this);
-
     }
 
     public String getIdUsuario() {

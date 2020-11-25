@@ -1,4 +1,4 @@
-package br.com.ifood.cursoandroid.ifood.activity;
+package br.com.ifood.activity;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -21,9 +21,9 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
-import br.com.ifood.cursoandroid.ifood.R;
-import br.com.ifood.cursoandroid.ifood.helper.ConfiguracaoFirebase;
-import br.com.ifood.cursoandroid.ifood.helper.UsuarioFirebase;
+import br.com.ifood.R;
+import br.com.ifood.helper.ConfiguracaoFirebase;
+import br.com.ifood.helper.UsuarioFirebase;
 
 public class AutenticacaoActivity extends AppCompatActivity {
 
@@ -42,9 +42,7 @@ public class AutenticacaoActivity extends AppCompatActivity {
 
         inicializaComponentes();
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
-        //autenticacao.signOut();
 
-        //Verificar usuario logado
         verificarUsuarioLogado();
 
         tipoAcesso.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -52,7 +50,7 @@ public class AutenticacaoActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){//empresa
                     linearTipoUsuario.setVisibility(View.VISIBLE);
-                }else{//usuario
+                }else{//usuário
                     linearTipoUsuario.setVisibility(View.GONE);
                 }
             }
@@ -68,7 +66,7 @@ public class AutenticacaoActivity extends AppCompatActivity {
                 if ( !email.isEmpty() ){
                     if ( !senha.isEmpty() ){
 
-                        //Verifica estado do switch
+                        //Verifica o estado do switch
                         if( tipoAcesso.isChecked() ){//Cadastro
 
                             autenticacao.createUserWithEmailAndPassword(
@@ -95,20 +93,18 @@ public class AutenticacaoActivity extends AppCompatActivity {
                                         }catch (FirebaseAuthWeakPasswordException e){
                                             erroExcecao = "Digite uma senha mais forte!";
                                         }catch (FirebaseAuthInvalidCredentialsException e){
-                                            erroExcecao = "Por favor, digite um e-mail válido";
+                                            erroExcecao = "Digite um e-mail válido";
                                         }catch (FirebaseAuthUserCollisionException e){
-                                            erroExcecao = "Este conta já foi cadastrada";
+                                            erroExcecao = "Esta conta já está cadastrada no sistema";
                                         } catch (Exception e) {
-                                            erroExcecao = "ao cadastrar usuário: "  + e.getMessage();
+                                            erroExcecao = " ao cadastrar usuário: "  + e.getMessage();
                                             e.printStackTrace();
                                         }
 
                                         Toast.makeText(AutenticacaoActivity.this,
                                                 "Erro: " + erroExcecao ,
                                                 Toast.LENGTH_SHORT).show();
-
                                     }
-
                                 }
                             });
 
@@ -122,7 +118,7 @@ public class AutenticacaoActivity extends AppCompatActivity {
                                     if (task.isSuccessful()){
 
                                         Toast.makeText(AutenticacaoActivity.this,
-                                                "Logado com sucesso",
+                                                "Logado com sucesso!",
                                                 Toast.LENGTH_SHORT).show();
                                         String tipoUsuario = task.getResult().getUser().getDisplayName();
                                         abrirTelaPrincipal(tipoUsuario);
@@ -134,7 +130,6 @@ public class AutenticacaoActivity extends AppCompatActivity {
                                     }
                                 }
                             });
-
                         }
 
                     }else {
@@ -147,10 +142,8 @@ public class AutenticacaoActivity extends AppCompatActivity {
                             "Preencha o E-mail!",
                             Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
     }
 
     private void verificarUsuarioLogado(){
@@ -181,5 +174,4 @@ public class AutenticacaoActivity extends AppCompatActivity {
         tipoUsuario = findViewById(R.id.switchTipoUsuario);
         linearTipoUsuario = findViewById(R.id.linearTipoUsuario);
     }
-
 }

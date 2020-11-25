@@ -48,13 +48,11 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes_empresa);
 
-        //Configurações iniciais
         inicializarComponentes();
         storageReference = ConfiguracaoFirebase.getFirebaseStorage();
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         idUsuarioLogado = UsuarioFirebase.getIdUsuario();
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Configurações");
         setSupportActionBar(toolbar);
@@ -73,10 +71,7 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
             }
         });
 
-        /*Recuperar dados da empresa*/
         recuperarDadosEmpresa();
-
-
     }
 
     private void recuperarDadosEmpresa(){
@@ -101,22 +96,18 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
                                 .load(urlImagemSelecionada)
                                 .into(imagePerfilEmpresa);
                     }
-
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     public void validarDadosEmpresa(View view){
 
-        //Valida se os campos foram preenchidos
+        //Validação para se os campos foram preenchidos
         String nome = editEmpresaNome.getText().toString();
         String taxa = editEmpresaTaxa.getText().toString();
         String categoria = editEmpresaCategoria.getText().toString();
@@ -138,18 +129,17 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
                         finish();
 
                     }else{
-                        exibirMensagem("Digite um tempo de entrega");
+                        exibirMensagem("Digite um tempo de entrega: ");
                     }
                 }else{
-                    exibirMensagem("Digite uma categoria");
+                    exibirMensagem("Digite uma categoria: ");
                 }
             }else{
-                exibirMensagem("Digite uma taxa de entrega");
+                exibirMensagem("Digite uma taxa de entrega: ");
             }
         }else{
-            exibirMensagem("Digite um nome para a empresa");
+            exibirMensagem("Digite um nome para a empresa: ");
         }
-
     }
 
     private void exibirMensagem(String texto){
@@ -165,7 +155,6 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
             Bitmap imagem = null;
 
             try {
-
                 switch (requestCode) {
                     case SELECAO_GALERIA:
                         Uri localImagem = data.getData();
@@ -196,7 +185,7 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(ConfiguracoesEmpresaActivity.this,
-                                    "Erro ao fazer upload da imagem",
+                                    "Erro ao fazer upload da imagem. Tente novamente!",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -205,20 +194,16 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
 
                             urlImagemSelecionada = taskSnapshot.getDownloadUrl().toString();
                             Toast.makeText(ConfiguracoesEmpresaActivity.this,
-                                    "Sucesso ao fazer upload da imagem",
+                                    "Sucesso ao fazer upload da imagem!",
                                     Toast.LENGTH_SHORT).show();
-
                         }
                     });
-
                 }
 
             }catch (Exception e){
                 e.printStackTrace();
             }
-
         }
-
     }
 
     private void inicializarComponentes(){
@@ -228,5 +213,4 @@ public class ConfiguracoesEmpresaActivity extends AppCompatActivity {
         editEmpresaTempo = findViewById(R.id.editEmpresaTempo);
         imagePerfilEmpresa = findViewById(R.id.imagePerfilEmpresa);
     }
-
 }

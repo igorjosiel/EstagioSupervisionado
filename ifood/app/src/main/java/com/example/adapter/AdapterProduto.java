@@ -1,4 +1,4 @@
-package br.com.ifood.cursoandroid.ifood.adapter;
+package br.com.ifood.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,12 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import br.com.ifood.cursoandroid.ifood.R;
-import br.com.ifood.cursoandroid.ifood.model.Produto;
-
-/**
- * Created by Jamilton
- */
+import br.com.ifood.R;
+import br.com.ifood.model.Produto;
 
 public class AdapterProduto extends RecyclerView.Adapter<AdapterProduto.MyViewHolder>{
 

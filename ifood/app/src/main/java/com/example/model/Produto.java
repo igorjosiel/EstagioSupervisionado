@@ -27,7 +27,6 @@ public class Produto {
                 .child( getIdUsuario() )
                 .child( getIdProduto() );
         produtoRef.setValue(this);
-
     }
 
     public void remover(){

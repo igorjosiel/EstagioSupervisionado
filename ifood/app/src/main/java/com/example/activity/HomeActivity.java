@@ -49,21 +49,17 @@ public class HomeActivity extends AppCompatActivity {
         firebaseRef = ConfiguracaoFirebase.getFirebase();
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
-        //Configurações Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Ifood");
         setSupportActionBar(toolbar);
 
-        //Configura recyclerview
         recyclerEmpresa.setLayoutManager(new LinearLayoutManager(this));
         recyclerEmpresa.setHasFixedSize(true);
         adapterEmpresa = new AdapterEmpresa(empresas);
         recyclerEmpresa.setAdapter( adapterEmpresa );
 
-        //Recupera empresas
         recuperarEmpresas();
 
-        //Configuração do search view
         searchView.setHint("Pesquisar restaurantes");
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
@@ -78,7 +74,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //Configurar evento de clique
         recyclerEmpresa.addOnItemTouchListener(
                 new RecyclerItemClickListener(
                         this,
@@ -91,22 +86,18 @@ public class HomeActivity extends AppCompatActivity {
                                 Intent i = new Intent(HomeActivity.this, CardapioActivity.class);
                                 i.putExtra("empresa", empresaSelecionada);
                                 startActivity(i);
-
                             }
 
                             @Override
                             public void onLongItemClick(View view, int position) {
-
                             }
 
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                             }
                         }
                 )
         );
-
     }
 
     private void pesquisarEmpresas(String pesquisa){
@@ -128,12 +119,10 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 adapterEmpresa.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
@@ -152,15 +141,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 adapterEmpresa.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override
@@ -169,7 +155,6 @@ public class HomeActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_usuario, menu);
 
-        //Configurar botao de pesquisa
         MenuItem item = menu.findItem(R.id.menuPesquisa);
         searchView.setMenuItem(item);
 
@@ -208,5 +193,4 @@ public class HomeActivity extends AppCompatActivity {
     private void abrirConfiguracoes(){
         startActivity(new Intent(HomeActivity.this, ConfiguracoesUsuarioActivity.class));
     }
-
 }

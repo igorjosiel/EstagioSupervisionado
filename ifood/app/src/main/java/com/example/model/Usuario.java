@@ -20,7 +20,6 @@ public class Usuario {
                 .child("usuarios")
                 .child( getIdUsuario() );
         usuarioRef.setValue(this);
-
     }
 
     public String getIdUsuario() {
